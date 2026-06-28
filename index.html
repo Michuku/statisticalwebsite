@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>StatVision Consultancy — Data Analysis & Research Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
+<script src="script.js" defer></script>
+<script src="firebase-config.js" defer></script>
+</head>
+<body>
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="ni">
+    <a href="#" class="logo" onclick="showPage('home');return false">StatVision<span> Consultancy</span></a>
+    <ul class="nl">
+      <li><a href="#" onclick="showPage('home');window.scrollTo(0,0);return false"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</a></li>
+      <li><a href="#" onclick="showPage('home');scrollTo2('services');return false">Services</a></li>
+      <li><a href="#" onclick="showPage('home');scrollTo2('portfolio');return false">Portfolio</a></li>
+      <li><a href="#" onclick="showPage('home');scrollTo2('how');return false">How It Works</a></li>
+      <li><a href="#" onclick="goClient();return false">Client</a></li>
+      <li><a href="#" class="ncta" onclick="openModal();return false">Start Project</a></li>
+    </ul>
+    <button class="ntog" onclick="toggleMM()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mm" id="mmenu">
+  <a href="#" onclick="showPage('home');toggleMM();return false">🏠 Home</a>
+  <a href="#" onclick="showPage('home');scrollTo2('services');toggleMM();return false">Services</a>
+  <a href="#" onclick="showPage('home');scrollTo2('portfolio');toggleMM();return false">Portfolio</a>
+  <a href="#" onclick="goClient();toggleMM();return false">Client Dashboard</a>
+  <a href="#" class="ncta" onclick="openModal();toggleMM();return false">Start Project</a>
+</div>
+
+<!-- ══════════ HOME PAGE ══════════ -->
+<div id="page-home" class="page active">
+<section class="hero" id="home">
+  <div class="hparts" id="hparts"></div>
+  <div class="hgrid"></div><div class="hglow"></div><div class="hglow2"></div>
+  <div class="hi">
+    <div>
+      <div class="hlbl">Professional Data Services</div>
+      <h1>Your data,<br/>expertly <em>decoded.</em></h1>
+      <p class="hero-sub">StatVision Consultancy connects researchers, businesses, students, and organisations with expert data analysts. Submit your dataset — or let us collect it — and receive publication-ready results using SPSS, Stata, R, or Python.</p>
+      <div class="hcon">📞 <a href="tel:+254748216918">+254 748 216 918</a>&nbsp;|&nbsp;📧 <a href="mailto:hello@statvisionconsultancy.co.ke" style="color:rgba(255,255,255,.65)">hello@statvisionconsultancy.co.ke</a>&nbsp;|&nbsp;📍 Nairobi, Kenya</div>
+      <div class="hbtns">
+        <a href="#" class="bp" onclick="openModal();return false">▶ Start Your Project</a>
+        <a href="#" class="bo" onclick="openChat();return false">💬 Consult an Analyst</a>
+      </div>
+    </div>
+    <div class="pbiwrap">
+      <div class="cbhead" style="padding:0 0 .5rem 0">
+        <span class="cbtit" style="color:#605E5C">Statistical Visualisation Tools</span>
+        <span class="cbbadge live2" style="color:#107C10;background:#DFF6DD"><span></span>Live</span>
+      </div>
+      <div class="pbitiles">
+        <div class="pbit pt-num"><div class="ptlbl">Opportunity Count</div><div class="ptbig" id="pt1">487</div></div>
+        <div class="pbit"><div class="ptlbl">Opportunity Trend</div><svg class="ptsvg" id="pt2" viewBox="0 0 110 50"></svg></div>
+        <div class="pbit"><div class="ptlbl">Opportunity Mix</div><svg class="ptsvg" id="pt3" viewBox="0 0 110 50"></svg></div>
+        <div class="pbit pt-num"><div class="ptlbl">Total Pipeline</div><div class="ptbig ptteal" id="pt4">$2bn</div></div>
+        <div class="pbit pt-wide"><div class="ptlbl">Opportunity Count by Month</div><svg class="ptsvg" id="pt5" viewBox="0 0 230 55"></svg></div>
+        <div class="pbit pt-wide"><div class="ptlbl">Average Revenue</div><svg class="ptsvg" id="pt6" viewBox="0 0 230 55"></svg></div>
+        <div class="pbit"><div class="ptlbl">Win Probability</div><svg class="ptsvg" id="pt7" viewBox="0 0 110 50"></svg></div>
+        <div class="pbit"><div class="ptlbl">Average Revenue</div><svg class="ptsvg" id="pt8" viewBox="0 0 110 50"></svg></div>
+        <div class="pbit pt-num"><div class="ptlbl">Estimated Revenue</div><div class="ptbig ptcoral" id="pt9">$461M</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- SERVICES TOP TICKER (scrolling L→R) -->
+  <div class="tickw" style="width:100%;position:relative;z-index:2">
+    <div class="ticker" id="topTicker"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="sbar">
+  <div class="sbi">
+    <div class="fu"><div class="snum" data-t="342">0<span>+</span></div><div class="slbl">Projects Completed</div></div>
+    <div class="fu" style="transition-delay:.1s"><div class="snum" data-t="218">0<span>+</span></div><div class="slbl">Satisfied Clients</div></div>
+    <div class="fu" style="transition-delay:.2s"><div class="snum" data-t="24">0<span>+</span></div><div class="slbl">Countries Reached</div></div>
+    <div class="fu" style="transition-delay:.3s"><div class="snum" data-t="97">0<span>%</span></div><div class="slbl">On-time Delivery</div></div>
+    <div class="fu" style="transition-delay:.4s"><div class="snum">4.9<span>★</span></div><div class="slbl">Avg Rating</div></div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="hwbg" id="how">
+  <div class="si">
+    <span class="ey">Simple Process</span>
+    <h2 class="st">From raw data to real insights</h2>
+    <p class="ss">Three clear steps — whether you already have data or need us to collect it from scratch.</p>
+    <div class="hwflow">
+      <svg class="hwchart" viewBox="0 0 1200 560" preserveAspectRatio="none">
+        <line x1="60" y1="40" x2="60" y2="520" stroke="#E3E8F0" stroke-width="2"/>
+        <line x1="60" y1="520" x2="1150" y2="520" stroke="#E3E8F0" stroke-width="2"/>
+        <rect x="140" y="380" width="70" height="140" rx="4" fill="#BBD8F5" opacity=".55"/>
+        <rect x="320" y="300" width="70" height="220" rx="4" fill="#BBD8F5" opacity=".55"/>
+        <rect x="500" y="340" width="70" height="180" rx="4" fill="#BBD8F5" opacity=".55"/>
+        <rect x="680" y="250" width="70" height="270" rx="4" fill="#BBD8F5" opacity=".55"/>
+        <rect x="860" y="200" width="70" height="320" rx="4" fill="#BBD8F5" opacity=".55"/>
+        <polyline points="60,460 175,330 360,420 535,260 715,300 895,150 1150,90" fill="none" stroke="#90B8E8" stroke-width="3" opacity=".7"/>
+        <polyline points="60,500 175,470 360,440 535,400 715,360 895,320 1150,270" fill="none" stroke="#F5A623" stroke-width="2.5" stroke-dasharray="6 5" opacity=".6"/>
+      </svg>
+      <svg class="hwarrows" viewBox="0 0 1200 560" preserveAspectRatio="none">
+        <defs><marker id="hwah" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--b2)"/></marker></defs>
+        <path d="M250,140 C 420,90 480,200 590,260" fill="none" stroke="var(--b2)" stroke-width="2.5" marker-end="url(#hwah)"/>
+        <path d="M730,300 C 850,360 880,400 870,430" fill="none" stroke="var(--b2)" stroke-width="2.5" marker-end="url(#hwah)"/>
+      </svg>
+      <div class="hwnode hwn1 fu">
+        <div class="hwcirc"><div class="hwcic">📋</div><div class="hwstep">1</div></div>
+        <h3>Submit your project</h3>
+        <p>Select service type, tool, format, and deadline. Upload your dataset or request collection. Chat with an analyst to align on scope.</p>
+      </div>
+      <div class="hwnode hwn2 fu" style="transition-delay:.1s">
+        <div class="hwcirc"><div class="hwcic">🔬</div><div class="hwstep">2</div></div>
+        <h3>We analyse your data</h3>
+        <p>Your assigned analyst works in SPSS, Stata, R, or Python. Track progress live and communicate directly through your dashboard.</p>
+      </div>
+      <div class="hwnode hwn3 fu" style="transition-delay:.2s">
+        <div class="hwcirc"><div class="hwcic">📊</div><div class="hwstep">3</div></div>
+        <h3>Receive your results</h3>
+        <p>Get a professionally formatted report in APA, Harvard, or Chicago style. Review the draft and request revisions before delivery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES AUTO-SCROLL TICKER -->
+<section class="svbg" id="services" style="padding-bottom:3rem">
+  <div class="si">
+    <span class="ey">What We Offer</span>
+    <h2 class="st">Services built for every research need</h2>
+    <p class="ss">From student dissertations to government policy research — all scales, all sectors. Cards scroll automatically left to right.</p>
+  </div>
+  <div class="svtw"><div class="svrow" id="svrow"></div></div>
+  <div class="si"><div class="svcta">
+    <a href="#" class="bp" onclick="openModal();return false">▶ Start Your Project</a>
+    <a href="#" class="bo" style="border-color:rgba(255,255,255,.3);color:#fff" onclick="openChat();return false">💬 Consult an Analyst First</a>
+  </div></div>
+</section>
+
+<!-- TOOLS -->
+<section class="tbg" id="tools">
+  <div class="si">
+    <span class="ey">Our Toolkit</span>
+    <h2 class="st">Industry-standard tools, expertly applied</h2>
+    <p class="ss">We work with the same tools used by leading universities, research institutions, and global organisations.</p>
+    <div class="tgd">
+      <div class="tc fu"><div class="tlogo">SPSS</div><p>IBM's leading platform for social science research, surveys, and academic analysis</p></div>
+      <div class="tc fu" style="transition-delay:.1s"><div class="tlogo">Stata</div><p>Econometrics and epidemiology tool favoured in economics, health, and policy research</p></div>
+      <div class="tc fu" style="transition-delay:.2s"><div class="tlogo" style="color:var(--sl)">R</div><p>Open-source statistical computing with world-class visualisation via ggplot2 and tidyverse</p></div>
+      <div class="tc fu" style="transition-delay:.3s"><div class="tlogo" style="color:var(--am)">Python</div><p>Versatile language for data science, machine learning, and advanced analytics</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="pbg" id="portfolio">
+  <div class="si">
+    <span class="ey">Our Work</span>
+    <h2 class="st">Projects that made a difference</h2>
+    <p class="ss">A selection of completed engagements across sectors — all delivered on time, to the highest standard.</p>
+    <div class="pgd">
+      <div class="pc fu"><div class="ptop" style="background:linear-gradient(90deg,#1565C0,#1976D2)"></div><div class="pbdy">
+        <div class="psec">Academic Research</div>
+        <h3>Determinants of Academic Performance — University Students</h3>
+        <p>Multiple regression analysis of 450 student responses examining socioeconomic, psychological, and institutional factors affecting GPA scores.</p>
+        <div class="pmeta"><span class="pchip">SPSS</span><span class="pchip">APA 7th</span><span class="pchip">n=450</span><span class="pchip">Regression</span></div>
+        <a href="#" class="pcta2" onclick="openModal();return false">Start a similar project →</a>
+      </div></div>
+      <div class="pc fu" style="transition-delay:.1s"><div class="ptop" style="background:linear-gradient(90deg,#F5A623,#F5C842)"></div><div class="pbdy">
+        <div class="psec">NGO / Development</div>
+        <h3>Impact Evaluation of a Nutrition Programme in Rural Kenya</h3>
+        <p>Mixed methods evaluation combining household survey data with qualitative interviews to assess programme reach and child nutrition outcomes for a donor report.</p>
+        <div class="pmeta"><span class="pchip">R</span><span class="pchip">Mixed Methods</span><span class="pchip">Harvard</span><span class="pchip">n=280</span></div>
+        <a href="#" class="pcta2" onclick="openModal();return false">Start a similar project →</a>
+      </div></div>
+      <div class="pc fu" style="transition-delay:.2s"><div class="ptop" style="background:linear-gradient(90deg,#546E7A,#6B8FA0)"></div><div class="pbdy">
+        <div class="psec">Business / Market Research</div>
+        <h3>Consumer Behaviour Analysis for an E-commerce Brand</h3>
+        <p>Logistic regression and cluster analysis on 1,200 customer records to identify high-value segments and predict purchase likelihood for marketing campaigns.</p>
+        <div class="pmeta"><span class="pchip">Python</span><span class="pchip">Stata</span><span class="pchip">n=1,200</span><span class="pchip">Cluster</span></div>
+        <a href="#" class="pcta2" onclick="openModal();return false">Start a similar project →</a>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER PROCESS -->
+<section class="prbg">
+  <div class="si">
+    <span class="ey">Order Process</span>
+    <h2 class="st">How your order works — step by step</h2>
+    <p class="ss">From your first click to final delivery — a seamless, trackable process with automated invoicing and payments.</p>
+    <div class="prsteps">
+      <div class="prst fu"><div class="prc">📝</div><h4>Configure</h4><p>Select service, tool, format, upload files, and set your deadline.</p></div>
+      <div class="prst fu" style="transition-delay:.1s"><div class="prc">💳</div><h4>Pay Deposit</h4><p>Pay 50% via M-Pesa, card, or PayPal. Auto-invoice is sent instantly.</p></div>
+      <div class="prst fu" style="transition-delay:.2s"><div class="prc">🔬</div><h4>Analysis</h4><p>Analyst works on your project. Track progress and chat in real time.</p></div>
+      <div class="prst fu" style="transition-delay:.3s"><div class="prc">📄</div><h4>Draft Review</h4><p>Review the draft, send feedback, and request any revisions needed.</p></div>
+    </div>
+    <div class="prsteps" style="margin-top:2rem">
+      <div class="prst fu"><div class="prc">✅</div><h4>Final Delivery</h4><p>Receive final deliverable and pay the remaining 50% balance.</p></div>
+      <div class="prst fu" style="transition-delay:.1s"><div class="prc">🧾</div><h4>Receipt</h4><p>Final receipt auto-emailed and saved to your account dashboard.</p></div>
+      <div class="prst fu" style="transition-delay:.2s"><div class="prc">⭐</div><h4>Review</h4><p>Rate and review your analyst to help future clients.</p></div>
+      <div class="prst fu" style="transition-delay:.3s"><div class="prc">🔁</div><h4>Repeat</h4><p>Return for your next project — all history stays in your account.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testibg">
+  <div class="si">
+    <span class="ey">Client Reviews</span>
+    <h2 class="st">What our clients say</h2>
+    <div class="tgd2">
+      <div class="testc fu"><div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="ttext">StatVision Consultancy saved my dissertation. The analyst explained every regression output clearly, the APA report was perfect, and it was delivered two days early. Passed with distinction!</p>
+        <div class="tauth"><div class="tav">AM</div><div><div class="tname">Amina M.</div><div class="trole">MSc Economics, University of Nairobi</div></div></div></div>
+      <div class="testc fu" style="transition-delay:.1s"><div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="ttext">We needed an impact evaluation for our donor within two weeks. StatVision Consultancy delivered on time and the quality of the mixed-methods analysis exceeded our expectations. Highly recommended.</p>
+        <div class="tauth"><div class="tav" style="background:var(--am);color:#0D1B2A">KO</div><div><div class="tname">Kevin O.</div><div class="trole">M&E Officer, Health NGO, Kenya</div></div></div></div>
+      <div class="testc fu" style="transition-delay:.2s"><div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        <p class="ttext">The real-time chat made communication seamless. The Python cluster analysis revealed customer segments we had completely missed. Excellent turnaround and value for money.</p>
+        <div class="tauth"><div class="tav" style="background:#546E7A">SN</div><div><div class="tname">Sarah N.</div><div class="trole">Marketing Manager, Retail Brand</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="ctasec" id="contact">
+  <h2>Ready to transform your data?</h2>
+  <p>Join 218+ clients who trust StatVision Consultancy. Call us now: <strong style="color:var(--am)">+254 748 216 918</strong></p>
+  <div class="ctabtns">
+    <a href="#" class="ba" onclick="openModal();return false">▶ Start Your Project</a>
+    <a href="#" class="bw" onclick="openChat();return false">💬 Talk to an Analyst</a>
+    <a href="#" class="bw" onclick="goClient();return false">👤 Client Login</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fi">
+    <div class="fgd">
+      <div class="fbrand">
+        <a href="#" class="logo" onclick="showPage('home');return false">StatVision<span style="color:var(--am)"> Consultancy</span></a>
+        <p>Professional data analysis and research services. SPSS, Stata, R, Python. Serving students, businesses, NGOs, and governments. Nairobi, Kenya.</p>
+      </div>
+      <div class="fcol"><h4>Services</h4><ul>
+        <li><a href="#">Quantitative Analysis</a></li><li><a href="#">Qualitative Analysis</a></li>
+        <li><a href="#">Mixed Methods</a></li><li><a href="#">Data Collection</a></li>
+        <li><a href="#">Data Visualisation</a></li><li><a href="#">Consultation</a></li></ul></div>
+      <div class="fcol"><h4>Company</h4><ul>
+        <li><a href="#">About Us</a></li><li><a href="#">Portfolio</a></li>
+        <li><a href="#">Blog</a></li><li><a href="#">Pricing</a></li>
+        <li><a href="#">FAQ</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4><ul>
+        <li><a href="tel:+254748216918">+254 748 216 918</a></li>
+        <li><a href="mailto:hello@statvisionconsultancy.co.ke">hello@statvisionconsultancy.co.ke</a></li>
+        <li><a href="#">WhatsApp Us</a></li>
+        <li><a href="#" onclick="goClient();return false">Client Login</a></li>
+        <li><a href="#" onclick="goStaff();return false" style="opacity:.55;font-size:.78rem">Staff Login</a></li>
+        <li><a href="#">Privacy Policy</a></li></ul></div>
+    </div>
+    <div class="fbot">
+      <p>© 2025 StatVision Consultancy. All rights reserved. Nairobi, Kenya. Tel: +254 748 216 918</p>
+      <div class="socs"><a href="#" class="soc">in</a><a href="#" class="soc">𝕏</a><a href="#" class="soc">✆</a></div>
+    </div>
+  </div>
+</footer>
+</div><!-- end home -->
+<!-- ══════════ CLIENT AUTH (LOGIN / SIGNUP) ══════════ -->
+<div id="page-clientauth" class="page">
+  <div class="authwrap">
+    <div class="authbox">
+      <div class="authlogo">StatVision<span> Consultancy</span></div>
+      <div class="authtabs">
+        <button class="authtab on" id="atab-login" onclick="authSwitch('login')">Log In</button>
+        <button class="authtab" id="atab-signup" onclick="authSwitch('signup')">Create Account</button>
+      </div>
+      <div id="authpane-login">
+        <p class="authsub">Welcome back — log in to track your orders.</p>
+        <div class="fg"><label>Email Address</label><input type="email" id="li_email" placeholder="your@email.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="li_pass" placeholder="••••••••"/></div>
+        <p id="authError" style="color:#D13438;font-size:.8rem;display:none;margin-bottom:.6rem"></p>
+        <button class="bp" style="width:100%" onclick="clientLogin()">Log In</button>
+        <p class="authswitch">No account? <a href="#" onclick="authSwitch('signup');return false">Create one</a></p>
+      </div>
+      <div id="authpane-signup" style="display:none">
+        <p class="authsub">Create your StatVision Consultancy account to submit and track orders.</p>
+        <div class="frow"><div class="fg"><label>Full Name</label><input type="text" id="su_name" placeholder="Your full name"/></div><div class="fg"><label>Phone</label><input type="tel" id="su_phone" placeholder="+254 7XX XXX XXX"/></div></div>
+        <div class="fg"><label>Email Address</label><input type="email" id="su_email" placeholder="your@email.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="su_pass" placeholder="Create a password"/></div>
+        <p id="authError2" style="color:#D13438;font-size:.8rem;display:none;margin-bottom:.6rem"></p>
+        <button class="bp" style="width:100%" onclick="clientSignup()">Create Account</button>
+        <p class="authswitch">Already have an account? <a href="#" onclick="authSwitch('login');return false">Log in</a></p>
+      </div>
+      <p class="authback"><a href="#" onclick="showPage('home');return false">← Back to website</a></p>
+    </div>
+  </div>
+</div>
+<!-- ══════════ CLIENT DASHBOARD ══════════ -->
+<div id="page-client" class="page">
+<div class="dlayout">
+  <div class="dsb">
+    <div class="dsb-logo">StatVision<span> Consultancy</span><span class="dsb-role">Client Portal</span></div>
+    <span class="slbl2">Main Menu</span>
+    <button class="snav active" onclick="cTab('overview',this)"><span class="sni">📊</span>Overview</button>
+    <button class="snav" onclick="cTab('orders',this)"><span class="sni">📋</span>My Orders</button>
+    <button class="snav" onclick="cTab('messages',this)"><span class="sni">💬</span>Messages<span class="ndot"></span></button>
+    <button class="snav" onclick="cTab('docs',this)"><span class="sni">📁</span>Documents</button>
+    <button class="snav" onclick="cTab('invoices',this)"><span class="sni">🧾</span>Invoices & Receipts</button>
+    <button class="snav" onclick="cTab('notifs',this)"><span class="sni">🔔</span>Notifications<span class="ndot"></span></button>
+    <button class="snav" onclick="cTab('profile',this)"><span class="sni">👤</span>Profile & Settings</button>
+    <div class="ssep"></div>
+    <div class="ssep"></div>
+    <button class="snav" onclick="openModal()"><span class="sni">➕</span>New Order</button>
+    <button class="snav" onclick="clientLogout()"><span class="sni">🚪</span>Log Out</button>
+    <button class="snav" onclick="showPage('home')"><span class="sni">🏠</span>Back to Website</button>
+  </div>
+  <div class="dmain">
+    <div class="dtop">
+      <div class="dtitle" id="cTabTitle">Client Overview</div>
+      <div class="dusr"><div class="dav" id="cUserAvatar">AM</div><div class="duname" id="cUserName">Amina Mwangi</div></div>
+    </div>
+    <div class="dcontent">
+      <!-- OVERVIEW (Power BI themed live dashboard) -->
+      <div id="ctab-overview">
+        <div class="pbi">
+          <div class="pbi-toolbar">
+            <h2>📊 Client Report <span class="pbi-live"><i></i>LIVE</span></h2>
+            <div class="pbi-actions">
+              <button class="pbi-btn" onclick="pbiRefresh()">⟳ Refresh</button>
+              <button class="pbi-btn" onclick="pbiPause()" id="pbiPauseBtn">⏸ Pause</button>
+              <button class="pbi-btn" onclick="cTab('orders',null)">⛶ Open Orders</button>
+            </div>
+          </div>
+          <div class="pbi-slicers">
+            <div class="pbi-slicer">📁 Client: <b id="pbiSlicerName">Guest</b></div>
+            <div class="pbi-slicer">📅 Period: <b>Last 30 days</b></div>
+            <div class="pbi-slicer">🏷️ Status: <b>All</b></div>
+          </div>
+
+          <div class="pbi-grid-kpi" id="pbiKpiRow"></div>
+
+          <div class="pbi-row">
+            <div class="pbi-visual">
+              <h3>Order Spend Trend</h3>
+              <div class="vs">KES — by week, draft vs final billing</div>
+              <div class="pbi-legend">
+                <span><i style="background:#F2C811"></i>Draft Billing</span>
+                <span><i style="background:#1565C0"></i>Final Billing</span>
+              </div>
+              <svg id="pbiBarChart" viewBox="0 0 720 190" width="100%" height="190"></svg>
+            </div>
+            <div class="pbi-visual">
+              <h3>Payment Mix</h3>
+              <div class="vs">Paid vs deposits vs balance</div>
+              <div class="pbi-donut-wrap">
+                <div style="position:relative"><svg width="120" height="120" viewBox="0 0 120 120" id="pbiDonut"></svg>
+                  <div class="pbi-donut-center" id="pbiDonutCenter" style="left:30px;top:42px"></div>
+                </div>
+                <div class="pbi-donut-list" id="pbiDonutList"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pbi-visual pbi-table-visual">
+            <h3>My Recent Orders</h3>
+            <div class="vs">Streaming order status updates</div>
+            <div style="overflow-x:auto">
+              <table>
+                <thead><tr><th>Order ID</th><th>Project</th><th>Tool</th><th>Draft Due</th><th>Final Due</th><th>Status</th></tr></thead>
+                <tbody id="pbiOrdersBody">
+                  <tr><td><strong>DB-2025-001</strong></td><td>MSc Dissertation — Regression</td><td>SPSS</td><td>25 Jun 2025</td><td>28 Jun 2025</td><td><span class="pbi-status prog">In Progress</span></td></tr>
+                  <tr><td><strong>DB-2025-002</strong></td><td>NGO Impact Evaluation</td><td>R</td><td>12 Jul 2025</td><td>15 Jul 2025</td><td><span class="pbi-status done">Confirmed</span></td></tr>
+                  <tr><td><strong>DB-2025-003</strong></td><td>Consumer Cluster Analysis</td><td>Python</td><td>18 Jul 2025</td><td>20 Jul 2025</td><td><span class="pbi-status review">Draft Review</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ORDERS -->
+      <div id="ctab-orders" style="display:none">
+        <div class="dtw" style="margin-bottom:1.2rem">
+          <div class="dth"><h3>My Submitted Orders</h3></div>
+          <div style="overflow-x:auto"><table>
+            <thead><tr><th>Order ID</th><th>Project</th><th>Tool</th><th>Analyst</th><th>Deadline</th><th>Total</th><th>Status</th><th>Completed Work</th></tr></thead>
+            <tbody id="myOrdersBody"><tr><td colspan="8" style="text-align:center;color:var(--sl);padding:1.4rem">Log in to see your submitted orders here.</td></tr></tbody>
+          </table></div>
+        </div>
+        <div class="filt">
+          <button class="fb2 on" onclick="filt(this,'all')">All</button>
+          <button class="fb2" onclick="filt(this,'prog')">In Progress</button>
+          <button class="fb2" onclick="filt(this,'done')">Completed</button>
+          <button class="fb2" onclick="filt(this,'pend')">Pending</button>
+        </div>
+        <div class="odtl">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+            <div><strong style="font-family:var(--fd);font-size:1rem">DB-2025-001</strong>&nbsp;<span class="badge b-pr">In Progress</span></div>
+            <div style="font-size:.81rem;color:var(--sl)">⏱ Final deadline: <strong>28 Jun 2025</strong> &nbsp;|&nbsp; Draft by: <strong>25 Jun 2025</strong></div>
+          </div>
+          <div class="odg">
+            <div class="odf"><label>Project Title</label><p>MSc Dissertation — Determinants of Academic Performance</p></div>
+            <div class="odf"><label>Service</label><p>Quantitative Analysis</p></div>
+            <div class="odf"><label>Tool</label><p>SPSS (IBM SPSS Statistics 27)</p></div>
+            <div class="odf"><label>Report Format</label><p>APA 7th Edition</p></div>
+            <div class="odf"><label>Assigned Analyst</label><p>Henry G. Michuku</p></div>
+            <div class="odf"><label>Payment Status</label><p>Deposit paid KES 12,500 | Balance: KES 12,500</p></div>
+          </div>
+          <div style="margin-top:.9rem;display:flex;gap:.65rem;flex-wrap:wrap">
+            <button class="db1 dba" onclick="cTab('messages',null)">💬 Message Analyst</button>
+            <button class="db1 dbb" onclick="cTab('docs',null)">📁 Files</button>
+            <button class="db1 dbb" onclick="cTab('invoices',null)">🧾 Invoice</button>
+          </div>
+        </div>
+        <div class="odtl">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+            <div><strong style="font-family:var(--fd);font-size:1rem">DB-2025-003</strong>&nbsp;<span class="badge b-rv">Draft Review</span></div>
+            <div style="font-size:.81rem;color:var(--sl)">⏱ Final deadline: <strong>20 Jul 2025</strong></div>
+          </div>
+          <div class="odg">
+            <div class="odf"><label>Project Title</label><p>Consumer Behaviour — Cluster Analysis</p></div>
+            <div class="odf"><label>Service</label><p>Quantitative Analysis + Visualisation</p></div>
+            <div class="odf"><label>Tool</label><p>Python (pandas, scikit-learn, matplotlib)</p></div>
+            <div class="odf"><label>Report Format</label><p>Custom Corporate Format</p></div>
+            <div class="odf"><label>Analyst</label><p>Simon Macharia</p></div>
+            <div class="odf"><label>Payment</label><p>Deposit paid KES 18,000 | Balance: KES 18,000</p></div>
+          </div>
+          <div style="margin-top:.9rem;display:flex;gap:.65rem;flex-wrap:wrap">
+            <button class="db1 dba">📝 Submit Feedback</button>
+            <button class="db1 dbb">⬇ Download Draft</button>
+            <button class="db1" style="background:#E8F5E9;color:#2E7D32;border:none;padding:.36rem .88rem;border-radius:7px;font-family:var(--fd);font-weight:600;font-size:.76rem;cursor:pointer">✅ Approve Draft</button>
+          </div>
+        </div>
+      </div>
+      <!-- MESSAGES -->
+      <div id="ctab-messages" style="display:none">
+        <div class="dtw" style="max-width:700px">
+          <div class="dth"><h3>Chat — DB-2025-001 | Henry G. Michuku</h3></div>
+          <div class="cmsgs" id="clientMsgs" style="height:280px;padding:1.2rem">
+            <div class="msg a">Hi Amina, I've reviewed your dataset. I'll run a multiple linear regression with 4 predictors. Draft by Thursday.</div>
+            <div class="msg c">Thank you! Please include a normality test and check for multicollinearity too.</div>
+            <div class="msg a">Absolutely — Shapiro-Wilk normality test and VIF scores for all predictors. Will flag any issues in the methodology section.</div>
+            <div class="msg c">Perfect, thank you so much!</div>
+            <div class="msg a">Your draft is ready — check Documents tab. Please review within 48 hours and send feedback. Great dataset by the way! 🎉</div>
+          </div>
+          <div class="cinp" style="padding:.9rem;border-top:1px solid var(--br)">
+            <input type="text" id="clientChatIn" placeholder="Type a message to your analyst..." onkeydown="if(event.key==='Enter')clientSend()"/>
+            <button class="csend" onclick="clientSend()">➤</button>
+          </div>
+        </div>
+      </div>
+      <!-- DOCUMENTS -->
+      <div id="ctab-docs" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>Document Vault</h3><div class="dtha"><button class="db1 dbb">⬆ Upload File</button></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>File Name</th><th>Order</th><th>Type</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Action</th></tr></thead><tbody>
+            <tr><td>📊 dataset_amina.sav</td><td>DB-2025-001</td><td>Dataset</td><td>Client</td><td>12 Jun 2025</td><td>2.3 MB</td><td><button class="db1 dbb">⬇</button></td></tr>
+            <tr><td>📝 dissertation_brief.pdf</td><td>DB-2025-001</td><td>Instructions</td><td>Client</td><td>12 Jun 2025</td><td>540 KB</td><td><button class="db1 dbb">⬇</button></td></tr>
+            <tr><td>📈 draft_analysis_v1.docx</td><td>DB-2025-001</td><td>Draft</td><td>Analyst</td><td>18 Jun 2025</td><td>1.1 MB</td><td><button class="db1 dba">⬇</button></td></tr>
+            <tr><td>📊 cluster_output.ipynb</td><td>DB-2025-003</td><td>Output</td><td>Analyst</td><td>17 Jun 2025</td><td>890 KB</td><td><button class="db1 dbb">⬇</button></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <!-- INVOICES -->
+      <div id="ctab-invoices" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>Invoices & Receipts</h3></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Document #</th><th>Order</th><th>Date</th><th>Amount</th><th>Type</th><th>Status</th><th>Action</th></tr></thead><tbody>
+            <tr><td>INV-001</td><td>DB-2025-001</td><td>12 Jun 2025</td><td>KES 25,000</td><td>Invoice</td><td><span class="badge b-pn">Sent</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
+            <tr><td>REC-001</td><td>DB-2025-001</td><td>12 Jun 2025</td><td>KES 12,500</td><td>Deposit Receipt</td><td><span class="badge b-dn">Paid</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
+            <tr><td>INV-002</td><td>DB-2025-003</td><td>15 Jun 2025</td><td>KES 36,000</td><td>Invoice</td><td><span class="badge b-pr">Partial</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <!-- NOTIFICATIONS -->
+      <div id="ctab-notifs" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>Notifications</h3><div class="dtha"><button class="db1 dbb">Mark All Read</button></div></div>
+          <div style="padding:0">
+            <div style="padding:.9rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.9rem;background:#FFF8E1"><span style="font-size:1.2rem">📤</span><div style="flex:1"><strong style="font-size:.85rem">Draft uploaded for DB-2025-001</strong><div style="font-size:.76rem;color:var(--sl)">Henry G. Michuku uploaded your draft. Review and send feedback. · 2 hours ago</div></div><button class="db1 dba" onclick="cTab('docs',null)">View</button></div>
+            <div style="padding:.9rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.9rem"><span style="font-size:1.2rem">💳</span><div style="flex:1"><strong style="font-size:.85rem">Deposit confirmed — DB-2025-001</strong><div style="font-size:.76rem;color:var(--sl)">KES 12,500 received via M-Pesa. Order confirmed. · 12 Jun 2025</div></div><button class="db1 dbb" onclick="cTab('invoices',null)">Receipt</button></div>
+            <div style="padding:.9rem 1.4rem;display:flex;align-items:center;gap:.9rem"><span style="font-size:1.2rem">🆕</span><div style="flex:1"><strong style="font-size:.85rem">Account created successfully</strong><div style="font-size:.76rem;color:var(--sl)">Welcome to StatVision Consultancy! Your account is ready. · 1 Jun 2025</div></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- PROFILE -->
+      <div id="ctab-profile" style="display:none">
+        <div class="odtl" style="max-width:560px">
+          <h3 style="font-family:var(--fd);font-size:1rem;margin-bottom:1.15rem">My Profile & Settings</h3>
+          <div class="frow"><div class="fg"><label>Full Name</label><input type="text" id="prof_name" value="Amina Mwangi"/></div><div class="fg"><label>Email</label><input type="email" id="prof_email" value="amina@email.com" readonly/></div></div>
+          <div class="frow"><div class="fg"><label>Phone</label><input type="tel" id="prof_phone" value="+254 712 000 000"/></div><div class="fg"><label>Organisation</label><input type="text" value="University of Nairobi"/></div></div>
+          <div class="frow"><div class="fg"><label>Country</label><input type="text" value="Kenya"/></div><div class="fg"><label>Account Created</label><input type="text" id="prof_created" value="—" readonly/></div></div>
+          <div class="fg"><label>Notification Preferences</label>
+            <select><option>Email + SMS (recommended)</option><option>Email only</option><option>SMS only</option></select></div>
+          <div style="display:flex;gap:.65rem;margin-top:.5rem">
+            <button class="db1 dba" onclick="alert('Profile saved!')">Save Changes</button>
+            <button class="db1 dbb">Change Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end client -->
+<!-- ══════════ ANALYST PORTAL ══════════ -->
+<!-- ══════════ STAFF AUTH (ADMIN / ANALYST — internal only) ══════════ -->
+<div id="page-staffauth" class="page">
+  <div class="authwrap">
+    <div class="authbox">
+      <div class="authlogo">StatVision<span> Consultancy</span></div>
+      <p class="authsub" style="text-align:center;margin-top:-.4rem">Staff Login — internal access only</p>
+      <div class="fg"><label>Work Email</label><input type="email" id="st_email" placeholder="you@statvisionconsultancy.co.ke"/></div>
+      <div class="fg"><label>Password</label><input type="password" id="st_pass" placeholder="••••••••"/></div>
+      <p id="staffAuthError" style="color:#D13438;font-size:.8rem;display:none;margin-bottom:.6rem"></p>
+      <button class="bp" style="width:100%" onclick="staffLogin()">Log In</button>
+      <p class="authback"><a href="#" onclick="showPage('home');return false">← Back to website</a></p>
+    </div>
+  </div>
+</div>
+<div id="page-analyst" class="page">
+<div class="dlayout">
+  <div class="dsb">
+    <div class="dsb-logo">StatVision<span> Consultancy</span><span class="dsb-role">Analyst Portal</span></div>
+    <span class="slbl2">Analyst Menu</span>
+    <button class="snav active" onclick="anTab('overview',this)"><span class="sni">📊</span>My Dashboard</button>
+    <button class="snav" onclick="anTab('assignments',this)"><span class="sni">📋</span>My Assignments<span class="ndot"></span></button>
+    <button class="snav" onclick="anTab('calendar',this)"><span class="sni">📅</span>Deadline Calendar</button>
+    <button class="snav" onclick="anTab('msgs',this)"><span class="sni">💬</span>Client Messages<span class="ndot"></span></button>
+    <button class="snav" onclick="anTab('upload',this)"><span class="sni">📤</span>Upload Deliverable</button>
+    <button class="snav" onclick="anTab('profile',this)"><span class="sni">👤</span>My Profile</button>
+    <div class="ssep"></div>
+    <button class="snav" onclick="staffLogout()"><span class="sni">🚪</span>Log Out</button>
+    <button class="snav" onclick="showPage('home')"><span class="sni">🏠</span>Back to Website</button>
+  </div>
+  <div class="dmain">
+    <div class="dtop">
+      <div class="dtitle" id="anTabTitle">Analyst Dashboard</div>
+      <div class="dusr"><div class="dav" style="background:#7B1FA2">HM</div><div class="duname">Henry G. Michuku</div></div>
+    </div>
+    <div class="dcontent">
+      <!-- OVERVIEW -->
+      <div id="antab-overview">
+        <div class="kgd">
+          <div class="kpi"><div class="kpic" style="background:#E3F2FD">📋</div><div><div class="kpiv">4</div><div class="kpil">Active Assignments</div><div class="kpit tu">On track</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#FFF3E0">⚠️</div><div><div class="kpiv">1</div><div class="kpil">Due in 24hrs</div><div class="kpit td2">Action needed</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#E8F5E9">✅</div><div><div class="kpiv">28</div><div class="kpil">Completed Total</div><div class="kpit tu">100% on time</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#F3E5F5">⭐</div><div><div class="kpiv">4.9</div><div class="kpil">Avg Rating</div><div class="kpit tu">From 28 reviews</div></div></div>
+        </div>
+        <div class="dtw">
+          <div class="dth"><h3>Upcoming Deadlines</h3></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Order ID</th><th>Client</th><th>Project</th><th>Tool</th><th>Draft Due</th><th>Final Due</th><th>Status</th><th>Action</th></tr></thead><tbody>
+            <tr><td><strong>DB-2025-001</strong></td><td>Amina Mwangi</td><td>Dissertation Regression</td><td>SPSS</td><td style="color:var(--er);font-weight:600">TODAY</td><td>28 Jun</td><td><span class="badge b-pr">In Progress</span></td><td><button class="db1 dba" onclick="anTab('upload',null)">Upload Now</button></td></tr>
+            <tr><td><strong>DB-2025-006</strong></td><td>Peter Njoroge</td><td>Health Survey — ANOVA</td><td>SPSS</td><td>27 Jun</td><td>30 Jun</td><td><span class="badge b-pr">In Progress</span></td><td><button class="db1 dbb">Open</button></td></tr>
+            <tr><td><strong>DB-2025-009</strong></td><td>Faith Achieng</td><td>Econometrics Model</td><td>Stata</td><td>5 Jul</td><td>8 Jul</td><td><span class="badge b-pn">Confirmed</span></td><td><button class="db1 dbb">Open</button></td></tr>
+          </tbody></table></div>
+        </div>
+        <div class="crow">
+          <div class="cc"><h3>Workload This Month</h3>
+            <div class="prw"><div class="prl"><strong>Completed</strong><span>28</span></div><div class="prb"><div class="prf" style="width:85%;background:var(--ok)"></div></div></div>
+            <div class="prw"><div class="prl"><strong>In Progress</strong><span>4</span></div><div class="prb"><div class="prf" style="width:40%;background:var(--b2)"></div></div></div>
+            <div class="prw"><div class="prl"><strong>Pending Review</strong><span>2</span></div><div class="prb"><div class="prf" style="width:20%;background:var(--am)"></div></div></div>
+          </div>
+          <div class="cc"><h3>Tool Usage (My Projects)</h3>
+            <svg width="100%" height="140" viewBox="0 0 260 140">
+              <rect x="10" y="30" width="45" height="90" rx="5" fill="#1976D2" opacity=".85"/>
+              <rect x="70" y="60" width="45" height="60" rx="5" fill="#F5A623" opacity=".85"/>
+              <rect x="130" y="75" width="45" height="45" rx="5" fill="#00897B" opacity=".85"/>
+              <rect x="190" y="90" width="45" height="30" rx="5" fill="#7B1FA2" opacity=".85"/>
+              <text x="32" y="132" text-anchor="middle" font-size="9" fill="#546E7A">SPSS</text>
+              <text x="92" y="132" text-anchor="middle" font-size="9" fill="#546E7A">Stata</text>
+              <text x="152" y="132" text-anchor="middle" font-size="9" fill="#546E7A">R</text>
+              <text x="212" y="132" text-anchor="middle" font-size="9" fill="#546E7A">Python</text>
+              <text x="32" y="24" text-anchor="middle" font-size="10" font-weight="700" fill="#1976D2">16</text>
+              <text x="92" y="54" text-anchor="middle" font-size="10" font-weight="700" fill="#F5A623">8</text>
+              <text x="152" y="69" text-anchor="middle" font-size="10" font-weight="700" fill="#00897B">5</text>
+              <text x="212" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">4</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <!-- ASSIGNMENTS -->
+      <div id="antab-assignments" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>All Assigned Orders</h3></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Order ID</th><th>Client</th><th>Project</th><th>Service</th><th>Tool</th><th>Format</th><th>Final Deadline</th><th>Status</th><th>Client Files</th><th>Actions</th></tr></thead><tbody id="anAssignBody"></tbody></table></div>
+        </div>
+      </div>
+      <!-- CALENDAR -->
+      <div id="antab-calendar" style="display:none">
+        <div class="cc" style="background:#fff;border:1px solid var(--br);border-radius:14px;padding:1.5rem;margin-bottom:1.4rem">
+          <h3>June 2025 — Deadline Calendar</h3>
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem;margin-top:1rem">
+            <div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Mon</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Tue</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Wed</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Thu</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Fri</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Sat</div><div style="text-align:center;font-size:.72rem;font-weight:600;color:var(--sl);padding:.3rem">Sun</div>
+            <div style="padding:.5rem;font-size:.8rem;color:var(--ms)"></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)"></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)"></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)"></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)"></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">1</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">2</div>
+            <div style="padding:.5rem;font-size:.8rem">3</div><div style="padding:.5rem;font-size:.8rem">4</div><div style="padding:.5rem;font-size:.8rem">5</div><div style="padding:.5rem;font-size:.8rem">6</div><div style="padding:.5rem;font-size:.8rem">7</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">8</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">9</div>
+            <div style="padding:.5rem;font-size:.8rem">10</div><div style="padding:.5rem;font-size:.8rem">11</div><div style="padding:.5rem;font-size:.8rem">12</div><div style="padding:.5rem;font-size:.8rem">13</div><div style="padding:.5rem;font-size:.8rem">14</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">15</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">16</div>
+            <div style="padding:.5rem;font-size:.8rem">17</div><div style="padding:.5rem;font-size:.8rem">18</div><div style="padding:.5rem;font-size:.8rem">19</div><div style="padding:.5rem;font-size:.8rem">20</div><div style="padding:.5rem;font-size:.8rem">21</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">22</div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">23</div>
+            <div style="padding:.5rem;font-size:.8rem">24</div><div style="padding:.5rem;font-size:.8rem;background:#FFF3E0;border-radius:6px;font-weight:600">25<div style="font-size:.6rem;color:var(--wn);line-height:1.1">DB-001 Draft</div></div><div style="padding:.5rem;font-size:.8rem">26</div><div style="padding:.5rem;font-size:.8rem;background:#FFEBEE;border-radius:6px;font-weight:600">27<div style="font-size:.6rem;color:var(--er);line-height:1.1">DB-006 Draft</div></div><div style="padding:.5rem;font-size:.8rem;background:#FFEBEE;border-radius:6px;font-weight:600">28<div style="font-size:.6rem;color:var(--er);line-height:1.1">DB-001 Final</div></div><div style="padding:.5rem;font-size:.8rem;color:var(--ms)">29</div><div style="padding:.5rem;font-size:.8rem;background:#FFEBEE;border-radius:6px;font-weight:600;color:var(--ms)">30<div style="font-size:.6rem;color:var(--er);line-height:1.1">DB-006 Final</div></div>
+          </div>
+          <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.75rem"><div style="width:12px;height:12px;border-radius:3px;background:#FFF3E0"></div>Draft deadline</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.75rem"><div style="width:12px;height:12px;border-radius:3px;background:#FFEBEE"></div>Final deadline</div>
+            <div style="display:flex;align-items:center;gap:.4rem;font-size:.75rem"><div style="width:12px;height:12px;border-radius:3px;background:#E8F5E9"></div>Completed</div>
+          </div>
+        </div>
+      </div>
+      <!-- MESSAGES -->
+      <div id="antab-msgs" style="display:none">
+        <div class="dtw" style="max-width:700px">
+          <div class="dth"><h3>Client Chat — DB-2025-001 | Amina Mwangi</h3></div>
+          <div class="cmsgs" id="analystMsgs" style="height:280px;padding:1.2rem">
+            <div class="msg c">Hi Dr. Kariuki, I reviewed the draft. Can you please also run a Pearson correlation matrix for all variables?</div>
+            <div class="msg a">Of course Amina! I'll add the full Pearson correlation matrix to Table 3. I'll also annotate which correlations are significant at p&lt;0.05.</div>
+            <div class="msg c">Perfect! And please add a histogram of the residuals to check normality visually.</div>
+            <div class="msg a">Done — adding both the histogram and a Q-Q plot of residuals. I'll send the revised draft by end of day.</div>
+          </div>
+          <div class="cinp" style="padding:.9rem;border-top:1px solid var(--br)">
+            <input type="text" id="analystChatIn" placeholder="Type message to client..." onkeydown="if(event.key==='Enter')analystSend()"/>
+            <button class="csend" onclick="analystSend()">➤</button>
+          </div>
+        </div>
+      </div>
+      <!-- UPLOAD -->
+      <div id="antab-upload" style="display:none">
+        <div class="odtl" style="max-width:580px">
+          <h3 style="font-family:var(--fd);font-size:1rem;margin-bottom:1.1rem">Upload Deliverable</h3>
+          <div class="fg"><label>Select Order</label>
+            <select id="anUploadOrder" onchange="anShowOrderFiles()"></select></div>
+          <div class="fg"><label>Client's Uploaded Files</label>
+            <div id="anClientFiles" style="font-size:.8rem">—</div></div>
+          <div class="fg"><label>Deliverable Type</label>
+            <select id="anDelivType"><option>First Draft</option><option>Revised Draft</option><option>Final Deliverable</option><option>Supporting Output File</option></select></div>
+          <div class="fg"><label>Upload File</label>
+            <div class="upl" onclick="document.getElementById('anFile').click()">
+              <p>📎 <strong>Click to upload</strong> — DOCX, PDF, SPSS output, R Markdown, Jupyter Notebook</p>
+              <input type="file" id="anFile" multiple style="display:none" onchange="document.getElementById('anFn').textContent='Selected: '+[...this.files].map(f=>f.name).join(', ')"/>
+            </div>
+            <p id="anFn" style="font-size:.76rem;color:var(--b2);margin-top:.4rem"></p>
+          </div>
+          <div class="fg"><label>Notes to Client (optional)</label>
+            <textarea id="anUploadNotes" placeholder="e.g. Please review sections 3 and 4 especially — I've flagged two findings worth discussing..."></textarea></div>
+          <p id="anUploadStatus" style="font-size:.78rem;margin-bottom:.6rem"></p>
+          <button class="db1 dba" onclick="uploadDeliverable()">📤 Upload & Notify Client</button>
+        </div>
+      </div>
+      <!-- PROFILE -->
+      <div id="antab-profile" style="display:none">
+        <div class="odtl" style="max-width:560px">
+          <h3 style="font-family:var(--fd);font-size:1rem;margin-bottom:1.1rem">Analyst Profile</h3>
+          <div class="frow"><div class="fg"><label>Full Name</label><input type="text" value="Henry G. Michuku"/></div><div class="fg"><label>Email</label><input type="email" value="henry@statvisionconsultancy.co.ke"/></div></div>
+          <div class="frow"><div class="fg"><label>Phone</label><input type="tel" value="+254 700 111 222"/></div><div class="fg"><label>Role</label><input type="text" value="Principal Data Analyst" readonly/></div></div>
+          <div class="fg"><label>Specialisation</label><input type="text" value="Quantitative Analysis, Econometrics, Health Research"/></div>
+          <div class="fg"><label>Tools Proficiency</label><input type="text" value="SPSS, Stata, R, Excel"/></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem;margin-top:.5rem;padding:.9rem;background:var(--bl);border-radius:10px">
+            <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.5rem;font-weight:700;color:var(--b2)">28</div><div style="font-size:.72rem;color:var(--sl)">Completed</div></div>
+            <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.5rem;font-weight:700;color:var(--am)">4.9★</div><div style="font-size:.72rem;color:var(--sl)">Avg Rating</div></div>
+            <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.5rem;font-weight:700;color:var(--ok)">100%</div><div style="font-size:.72rem;color:var(--sl)">On Time</div></div>
+          </div>
+          <button class="db1 dba" style="margin-top:1rem" onclick="alert('Profile saved!')">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end analyst -->
+
+<!-- ══════════ ADMIN DASHBOARD ══════════ -->
+<div id="page-admin" class="page">
+<div class="dlayout">
+  <div class="dsb">
+    <div class="dsb-logo">StatVision<span> Consultancy</span><span class="dsb-role">Admin Panel</span></div>
+    <span class="slbl2">Administration</span>
+    <button class="snav active" onclick="adTab('overview',this)"><span class="sni">📊</span>Overview</button>
+    <button class="snav" onclick="adTab('orders',this)"><span class="sni">📋</span>All Orders<span class="ndot"></span></button>
+    <button class="snav" onclick="adTab('tracker',this)"><span class="sni">📡</span>Project Tracker</button>
+    <button class="snav" onclick="adTab('clients',this)"><span class="sni">👥</span>Clients</button>
+    <button class="snav" onclick="adTab('analysts',this)"><span class="sni">🔬</span>Analysts</button>
+    <button class="snav" onclick="adTab('finance',this)"><span class="sni">💰</span>Finance</button>
+    <button class="snav" onclick="adTab('reports',this)"><span class="sni">📈</span>Reports</button>
+    <button class="snav" onclick="adTab('notifs',this)"><span class="sni">🔔</span>Notifications<span class="ndot"></span></button>
+    <button class="snav" onclick="adTab('content',this)"><span class="sni">🌐</span>Website Content</button>
+    <div class="ssep"></div>
+    <button class="snav" onclick="adTab('analysts',this)"><span class="sni">➕</span>Add Analyst</button>
+    <button class="snav" onclick="staffLogout()"><span class="sni">🚪</span>Log Out</button>
+    <button class="snav" onclick="showPage('home')"><span class="sni">🏠</span>Back to Website</button>
+  </div>
+  <div class="dmain">
+    <div class="dtop">
+      <div class="dtitle" id="adTabTitle">Admin Overview</div>
+      <div class="dusr"><div class="dav" style="background:var(--am);color:#0D1B2A">AD</div><div class="duname">Admin — StatVision Consultancy</div></div>
+    </div>
+    <div class="dcontent">
+      <!-- OVERVIEW -->
+      <div id="adtab-overview">
+        <div class="kgd">
+          <div class="kpi"><div class="kpic" style="background:#E3F2FD">📋</div><div><div class="kpiv" id="adKpiActive">0</div><div class="kpil">Active Orders</div><div class="kpit" id="adKpiActiveSub">No orders yet</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#E8F5E9">💰</div><div><div class="kpiv" id="adKpiRevenue">KES 0</div><div class="kpil">Total Revenue Collected</div><div class="kpit" id="adKpiRevenueSub">From deposits paid</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#FFF3E0">👥</div><div><div class="kpiv" id="adKpiClients">0</div><div class="kpil">Total Clients</div><div class="kpit" id="adKpiClientsSub">Unique submitted orders</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#FFEBEE">⚠️</div><div><div class="kpiv" id="adKpiBalance">KES 0</div><div class="kpil">Outstanding Balance</div><div class="kpit" id="adKpiBalanceSub">Across all orders</div></div></div>
+        </div>
+        <div class="crow">
+          <div class="cc"><h3>Revenue Summary</h3>
+            <div id="adRevenueSummary" style="display:flex;flex-direction:column;gap:.7rem;padding:.5rem 0"></div>
+          </div>
+          <div class="cc"><h3>Order Status Breakdown</h3>
+            <svg width="100%" height="150" viewBox="0 0 280 150" id="adStatusChart"></svg>
+          </div>
+        </div>
+        <div class="dtw">
+          <div class="dth"><h3>Recent Activity</h3><div class="dtha"><button class="db1 dbb" onclick="adTab('orders',null)">View All</button></div></div>
+          <div style="padding:0" id="adRecentActivity"></div>
+        </div>
+      </div>
+      <!-- ALL ORDERS -->
+      <div id="adtab-orders" style="display:none">
+        <!-- PROJECTS TABLE -->
+        <div class="dtw" style="margin-bottom:1.4rem">
+          <div class="dth" style="background:var(--b3);border-radius:14px 14px 0 0">
+            <h3 style="color:#fff;font-family:var(--fd)">📋 Projects Table</h3>
+            <div class="dtha">
+              <button class="db1" style="background:var(--am);color:#0D1B2A;border:none" onclick="openAddProjectModal()">+ New Project</button>
+              <button class="db1 dbb" onclick="exportProjects()">⬇ Export</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table id="projectsTable">
+              <thead><tr>
+                <th>Ref No</th><th>Client Name</th><th>Email</th><th>Phone</th>
+                <th>Project Title</th><th>Service Category</th><th>Tool / Platform</th>
+                <th>Date Received</th><th>Deadline</th><th>Budget (KES)</th>
+                <th>Assigned Analyst</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="projectsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- ADD PROJECT INLINE FORM -->
+        <div id="addProjectForm" style="display:none;background:#fff;border:1px solid var(--br);border-radius:14px;padding:1.5rem;margin-bottom:1.4rem">
+          <h4 style="font-family:var(--fd);font-size:.97rem;color:var(--ch);margin-bottom:1.1rem">➕ Add New Project</h4>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.9rem">
+            <div class="fg"><label>Ref No</label><input type="text" id="np_ref" placeholder="DBA-003"/></div>
+            <div class="fg"><label>Client Name</label><input type="text" id="np_client" placeholder="Full name"/></div>
+            <div class="fg"><label>Email</label><input type="email" id="np_email" placeholder="client@email.com"/></div>
+            <div class="fg"><label>Phone</label><input type="tel" id="np_phone" placeholder="+254..."/></div>
+            <div class="fg"><label>Project Title</label><input type="text" id="np_title" placeholder="e.g. MSc Thesis Analysis"/></div>
+            <div class="fg"><label>Service Category</label>
+              <select id="np_service">
+                <optgroup label="Research & Academic"><option>Thesis Data Analysis</option><option>Dissertation Analysis</option><option>Proposal Development</option><option>Research Design</option><option>Questionnaire Design</option></optgroup>
+                <optgroup label="Statistical Analysis"><option>SPSS Analysis</option><option>STATA Analysis</option><option>R Analysis</option><option>Python Analysis</option><option>Excel Analytics</option></optgroup>
+                <optgroup label="Monitoring & Evaluation"><option>Baseline Surveys</option><option>Mid-Term Reviews</option><option>Endline Evaluations</option><option>Impact Assessment</option><option>Logical Frameworks</option><option>Theory of Change</option></optgroup>
+                <optgroup label="Data Management"><option>Data Cleaning</option><option>Data Validation</option><option>Data Entry</option><option>Database Design</option></optgroup>
+                <optgroup label="Visualization"><option>Power BI Dashboards</option><option>Tableau Dashboards</option><option>Interactive Reports</option><option>Executive Dashboards</option></optgroup>
+                <optgroup label="Advanced Analytics"><option>Predictive Analytics</option><option>Machine Learning</option><option>Time Series Analysis</option><option>Regression Analysis</option></optgroup>
+                <optgroup label="Survey Services"><option>KoboToolbox</option><option>ODK</option><option>SurveyCTO</option><option>Qualtrics</option></optgroup>
+                <optgroup label="GIS & Mapping"><option>ArcGIS</option><option>QGIS</option><option>Spatial Analysis</option></optgroup>
+                <optgroup label="Business Analytics"><option>KPI Tracking</option><option>Customer Analytics</option><option>Sales Analytics</option></optgroup>
+              </select>
+            </div>
+            <div class="fg"><label>Tool / Platform</label><input type="text" id="np_tool" placeholder="SPSS, R, Python, Power BI..."/></div>
+            <div class="fg"><label>Date Received</label><input type="date" id="np_date"/></div>
+            <div class="fg"><label>Deadline</label><input type="date" id="np_deadline"/></div>
+            <div class="fg"><label>Budget (KES)</label><input type="number" id="np_budget" placeholder="25000"/></div>
+            <div class="fg"><label>Assigned Analyst</label>
+              <select id="np_analyst"><option>Henry G. Michuku</option><option>Simon Macharia</option><option>Joseph Machuki</option><option>Unassigned</option></select>
+            </div>
+            <div class="fg"><label>Status</label>
+              <select id="np_status"><option>Pending</option><option>In Progress</option><option>Draft Review</option><option>Completed</option><option>Overdue</option></select>
+            </div>
+          </div>
+          <div style="display:flex;gap:.65rem;margin-top:.5rem">
+            <button class="db1 dba" onclick="saveProject()">Save Project</button>
+            <button class="db1 dbb" onclick="document.getElementById('addProjectForm').style.display='none'">Cancel</button>
+          </div>
+        </div>
+        <!-- STATUS SUMMARY CHIPS -->
+        <div class="filt">
+          <button class="fb2 on" onclick="filterProjects(this,'all')">All Projects</button>
+          <button class="fb2" onclick="filterProjects(this,'In Progress')" style="border-color:#FFE0B2">🔵 In Progress</button>
+          <button class="fb2" onclick="filterProjects(this,'Pending')" style="border-color:#BBDEFB">🟡 Pending</button>
+          <button class="fb2" onclick="filterProjects(this,'Draft Review')" style="border-color:#E1BEE7">🟣 Draft Review</button>
+          <button class="fb2" onclick="filterProjects(this,'Completed')" style="border-color:#C8E6C9">🟢 Completed</button>
+          <button class="fb2" onclick="filterProjects(this,'Overdue')" style="color:var(--er);border-color:#FFCDD2">🔴 Overdue</button>
+        </div>
+        <!-- FULL SQL ORDERS TABLE -->
+        <div class="dtw">
+          <div class="dth"><h3>Detailed Order Ledger</h3><div class="dtha"><button class="db1 dba" onclick="addRow()">+ Add</button><button class="db1 dbb" onclick="exportCSV()">⬇ Export CSV</button></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Order ID</th><th>Client</th><th>Project</th><th>Tool</th><th>Analyst</th><th>Deadline</th><th>Total</th><th>Deposit</th><th>Status</th><th>Client Files</th><th>Actions</th></tr></thead>
+          <tbody id="adminOrderBody"></tbody></table></div>
+        </div>
+      </div>
+      <!-- PROJECT TRACKER (moved from public site) -->
+      <div id="adtab-tracker" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>📡 Live Order & Progress Tracker</h3>
+            <div class="dtha">
+              <button class="db1 dba" onclick="addRow()">+ Add Order</button>
+              <button class="db1 dbb" onclick="exportCSV()">⬇ Export CSV</button>
+            </div>
+          </div>
+          <p style="padding:.9rem 1.4rem 0;font-size:.82rem;color:var(--sl)">Real-time SQL-style table tracking all orders, statuses, deadlines, payments, and assigned analysts.</p>
+          <div class="sqwrap"><table id="sqlTable">
+            <thead><tr><th>Order ID</th><th>Client</th><th>Email</th><th>Phone</th><th>Organisation</th><th>Project</th><th>Service</th><th>Tool</th><th>Format</th><th>Analyst</th><th>Deadline</th><th>Total (KES)</th><th>Deposit</th><th>Balance</th><th>Status</th></tr></thead>
+            <tbody id="sqlBody"></tbody>
+          </table></div>
+        </div>
+      </div>
+      <!-- CLIENTS -->
+      <div id="adtab-clients" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>Client Management</h3><div class="dtha"><button class="db1 dbb" onclick="exportCSV()">⬇ Export</button></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Country</th><th>Orders</th><th>Total Spent</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+            <tr><td><strong>Amina Mwangi</strong></td><td>amina@email.com</td><td>+254 712 000 000</td><td>Kenya</td><td>3</td><td>KES 61,000</td><td>1 Jun 2025</td><td><span class="badge b-dn">Active</span></td><td><button class="db1 dbb">View</button> <button class="db1 dbc">Suspend</button></td></tr>
+            <tr><td><strong>Kevin Omondi</strong></td><td>kevin@ngo.org</td><td>+254 722 111 222</td><td>Kenya</td><td>2</td><td>KES 45,000</td><td>5 Jun 2025</td><td><span class="badge b-dn">Active</span></td><td><button class="db1 dbb">View</button> <button class="db1 dbc">Suspend</button></td></tr>
+            <tr><td><strong>Sarah Njoki</strong></td><td>sarah@brand.co</td><td>+254 733 222 333</td><td>Kenya</td><td>1</td><td>KES 36,000</td><td>10 Jun 2025</td><td><span class="badge b-pr">New</span></td><td><button class="db1 dbb">View</button> <button class="db1 dbc">Suspend</button></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <!-- ANALYSTS -->
+      <div id="adtab-analysts" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.35rem;flex-wrap:wrap;gap:.5rem">
+          <h3 style="font-family:var(--fd);font-size:.97rem;color:var(--ch)">Analyst Accounts</h3>
+          <button class="db1 dba" onclick="toggleCreateAnalyst()">➕ Create Analyst Account</button>
+        </div>
+        <div id="createAnalystForm" style="display:none;background:#fff;border:1px solid var(--br);border-radius:14px;padding:1.5rem;margin-bottom:1.35rem;max-width:600px">
+          <h4 style="font-family:var(--fd);margin-bottom:1rem;color:var(--ch)">New Analyst Account</h4>
+          <div class="frow"><div class="fg"><label>Full Name</label><input type="text" placeholder="Analyst full name"/></div><div class="fg"><label>Email</label><input type="email" placeholder="analyst@statvisionconsultancy.co.ke"/></div></div>
+          <div class="frow"><div class="fg"><label>Phone</label><input type="tel" placeholder="+254..."/></div><div class="fg"><label>Role</label><select><option>Analyst</option><option>Senior Analyst</option><option>Lead Analyst</option></select></div></div>
+          <div class="fg"><label>Specialisation</label><input type="text" placeholder="e.g. Quantitative Analysis, Econometrics"/></div>
+          <div class="frow"><div class="fg"><label>Tools</label><input type="text" placeholder="SPSS, R, Python, Stata"/></div><div class="fg"><label>Temp Password</label><input type="password" placeholder="Temporary password"/></div></div>
+          <div style="display:flex;gap:.65rem;margin-top:.5rem">
+            <button class="db1 dba" onclick="alert('Analyst account created! Welcome email with login instructions sent to analyst.')">Create Account</button>
+            <button class="db1 dbb" onclick="document.getElementById('createAnalystForm').style.display='none'">Cancel</button>
+          </div>
+        </div>
+        <div class="dtw">
+          <div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Email</th><th>Specialisation</th><th>Tools</th><th>Active</th><th>Completed</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+            <tr><td><strong>Henry G. Michuku</strong><br/><span style="font-size:.7rem;color:var(--sl)">Principal Data Analyst</span></td><td>henry@statvisionconsultancy.co.ke</td><td>Quantitative</td><td>SPSS, Stata, R</td><td>4</td><td>28</td><td>⭐ 4.9</td><td><span class="badge b-dn">Active</span></td><td><button class="db1 dbb">Edit</button> <button class="db1 dbc">Deactivate</button></td></tr>
+            <tr><td><strong>Simon Macharia</strong><br/><span style="font-size:.7rem;color:var(--sl)">Chief Analyst</span></td><td>simon@statvisionconsultancy.co.ke</td><td>Data Science</td><td>Python, R</td><td>3</td><td>15</td><td>⭐ 4.8</td><td><span class="badge b-dn">Active</span></td><td><button class="db1 dbb">Edit</button> <button class="db1 dbc">Deactivate</button></td></tr>
+            <tr><td><strong>Joseph Machuki</strong><br/><span style="font-size:.7rem;color:var(--sl)">Admin · Economist & Statistician</span></td><td>joseph@statvisionconsultancy.co.ke</td><td>Econometrics, Statistics</td><td>Stata, SPSS</td><td>2</td><td>19</td><td>⭐ 5.0</td><td><span class="badge b-dn">Active</span></td><td><button class="db1 dbb">Edit</button> <button class="db1 dbc">Deactivate</button></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <!-- FINANCE -->
+      <div id="adtab-finance" style="display:none">
+        <div class="kgd">
+          <div class="kpi"><div class="kpic" style="background:#E8F5E9">💰</div><div><div class="kpiv">KES 284k</div><div class="kpil">Revenue This Month</div><div class="kpit tu">▲ 18%</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#E3F2FD">💳</div><div><div class="kpiv">KES 142k</div><div class="kpil">Deposits Received</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#FFF3E0">⏳</div><div><div class="kpiv">KES 96k</div><div class="kpil">Balances Pending</div></div></div>
+          <div class="kpi"><div class="kpic" style="background:#FFEBEE">↩️</div><div><div class="kpiv">KES 0</div><div class="kpil">Refunds Issued</div></div></div>
+        </div>
+        <div class="dtw">
+          <div class="dth"><h3>Payment Ledger</h3><div class="dtha"><button class="db1 dbb" onclick="exportCSV()">⬇ Export</button></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Order</th><th>Client</th><th>Type</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+            <tr><td>12 Jun 2025</td><td>DB-2025-001</td><td>Amina Mwangi</td><td>Deposit</td><td>M-Pesa</td><td>KES 12,500</td><td><span class="badge b-dn">Confirmed</span></td></tr>
+            <tr><td>15 Jun 2025</td><td>DB-2025-003</td><td>Sarah Njoki</td><td>Deposit</td><td>Card</td><td>KES 18,000</td><td><span class="badge b-dn">Confirmed</span></td></tr>
+            <tr><td>18 Jun 2025</td><td>DB-2025-005</td><td>Kevin Omondi</td><td>Full Payment</td><td>PayPal</td><td>KES 32,000</td><td><span class="badge b-dn">Confirmed</span></td></tr>
+            <tr><td>20 Jun 2025</td><td>DB-2025-002</td><td>John Kamau</td><td>Balance</td><td>M-Pesa</td><td>KES 14,000</td><td><span class="badge b-pn">Pending</span></td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <!-- REPORTS -->
+      <div id="adtab-reports" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.15rem;margin-bottom:1.65rem">
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="exportCSV()"><div class="kpic" style="background:#E3F2FD">📊</div><div><div class="kpiv" style="font-size:.97rem">Project Report</div><div class="kpil">All orders — client, analyst, status</div></div></div>
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="alert('Generating Revenue Report...')"><div class="kpic" style="background:#E8F5E9">💰</div><div><div class="kpiv" style="font-size:.97rem">Revenue Report</div><div class="kpil">Monthly income, methods, outstanding</div></div></div>
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="alert('Generating Analyst Report...')"><div class="kpic" style="background:#F3E5F5">🔬</div><div><div class="kpiv" style="font-size:.97rem">Analyst Report</div><div class="kpil">Performance, on-time rate, ratings</div></div></div>
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="alert('Generating Client Report...')"><div class="kpic" style="background:#FFF3E0">👥</div><div><div class="kpiv" style="font-size:.97rem">Client Report</div><div class="kpil">Activity, spend, retention</div></div></div>
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="exportCSV()"><div class="kpic" style="background:#E0F2F0">🗂️</div><div><div class="kpiv" style="font-size:.97rem">Export SQL Table</div><div class="kpil">Download full order tracker as CSV</div></div></div>
+          <div class="kpi" style="flex-direction:column;align-items:flex-start;gap:.4rem;cursor:pointer" onclick="alert('Generating Geography Report...')"><div class="kpic" style="background:#FCE4EC">🌍</div><div><div class="kpiv" style="font-size:.97rem">Geography Report</div><div class="kpil">Where clients are from</div></div></div>
+        </div>
+        <div class="dtw">
+          <div class="dth"><h3>Full Project Report</h3><div class="dtha"><button class="db1 dba" onclick="exportCSV()">⬇ Export CSV</button></div></div>
+          <div style="overflow-x:auto" id="reportTableWrap"></div>
+        </div>
+      </div>
+      <!-- NOTIFICATIONS -->
+      <div id="adtab-notifs" style="display:none">
+        <div class="dtw">
+          <div class="dth"><h3>Notification Centre</h3><div class="dtha"><button class="db1 dbb">Mark All Read</button></div></div>
+          <div style="padding:0">
+            <div style="padding:.88rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.85rem;background:#FFF8E1"><span>🆕</span><div style="flex:1"><strong style="font-size:.84rem">New client registered — John Kamau</strong><div style="font-size:.75rem;color:var(--sl)">10 min ago · john@email.com · +254 733 000 000 · Kenya</div></div><button class="db1 dbb">View</button></div>
+            <div style="padding:.88rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.85rem;background:#FFF3F3"><span>⚠️</span><div style="flex:1"><strong style="font-size:.84rem">Deadline in 24hrs — DB-2025-001</strong><div style="font-size:.75rem;color:var(--sl)">Analyst: Henry G. Michuku · Client: Amina Mwangi · Due: Today 11:59 PM</div></div><button class="db1 dbc">Alert Analyst</button></div>
+            <div style="padding:.88rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.85rem"><span>💳</span><div style="flex:1"><strong style="font-size:.84rem">Deposit received — DB-2025-008</strong><div style="font-size:.75rem;color:var(--sl)">Sarah Njoki paid KES 18,000 via M-Pesa · 2 hours ago</div></div><button class="db1 dbb">Receipt</button></div>
+            <div style="padding:.88rem 1.4rem;display:flex;align-items:center;gap:.85rem"><span>📤</span><div style="flex:1"><strong style="font-size:.84rem">Draft uploaded — DB-2025-003</strong><div style="font-size:.75rem;color:var(--sl)">Simon Macharia uploaded draft for Sarah Njoki · 3 hours ago</div></div><button class="db1 dbb">View</button></div>
+          </div>
+        </div>
+      </div>
+      <!-- CONTENT -->
+      <div id="adtab-content" style="display:none">
+        <div class="odtl">
+          <h3 style="font-family:var(--fd);font-size:1rem;margin-bottom:1.1rem">Website Content Management</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+            <div class="fg"><label>Projects Completed (stat)</label><input type="number" value="342"/></div>
+            <div class="fg"><label>Satisfied Clients (stat)</label><input type="number" value="218"/></div>
+            <div class="fg"><label>Countries Reached (stat)</label><input type="number" value="24"/></div>
+          </div>
+          <div class="fg"><label>Hero Tagline</label><input type="text" value="Your data, expertly decoded."/></div>
+          <div class="fg"><label>Contact Phone (displayed on site)</label><input type="tel" value="+254 748 216 918"/></div>
+          <div class="fg"><label>Contact Email</label><input type="email" value="hello@statvisionconsultancy.co.ke"/></div>
+          <button class="db1 dba" onclick="alert('Website content updated!')">Save & Update Website</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end admin -->
+<!-- ORDER MODAL -->
+<div class="mov" id="orderModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="mhd">
+      <h2>Start Your Project</h2>
+      <p>Fill in the details — your analyst confirms within 4 hours. Call: +254 748 216 918</p>
+      <button class="mcls" onclick="closeModal()">✕</button>
+    </div>
+    <div class="mbdy">
+      <div class="sdts"><div class="sdt on" id="sd1"></div><div class="sdt" id="sd2"></div><div class="sdt" id="sd3"></div></div>
+      <div id="ms1">
+        <div class="frow"><div class="fg"><label>Full Name</label><input type="text" id="ord_name" placeholder="Your full name"/></div><div class="fg"><label>Email Address</label><input type="email" id="ord_email" placeholder="your@email.com"/></div></div>
+        <div class="frow"><div class="fg"><label>Phone Number</label><input type="tel" id="ord_phone" placeholder="+254 748 216 918"/></div><div class="fg"><label>Organisation (optional)</label><input type="text" id="ord_org" placeholder="University, Company, NGO..."/></div></div>
+        <div class="fg"><label>Country</label><select id="ord_country"><option>Kenya</option><option>Uganda</option><option>Tanzania</option><option>Nigeria</option><option>South Africa</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></div>
+        <div class="fg"><label>Service Type</label>
+          <select id="ord_service"><option value="">Select service...</option><option>Data Analysis Only (I have data)</option><option>Data Collection + Analysis</option><option>Data Cleaning + Analysis</option><option>Statistical Consultation Only</option></select></div>
+      </div>
+      <div id="ms2" style="display:none">
+        <div class="frow"><div class="fg"><label>Data Type</label><select id="ord_datatype"><option>Quantitative</option><option>Qualitative</option><option>Mixed Methods</option><option>Secondary Data</option><option>Not sure yet</option></select></div>
+        <div class="fg"><label>Preferred Tool</label><select id="ord_tool"><option>SPSS</option><option>Stata</option><option>R</option><option>Python</option><option>Analyst's Discretion</option></select></div></div>
+        <div class="frow"><div class="fg"><label>Report Format</label><select id="ord_format"><option>APA 7th Edition</option><option>Harvard</option><option>Chicago</option><option>MLA</option><option>Raw Output Only</option><option>Custom</option></select></div>
+        <div class="fg"><label>Deliverable Type</label><select id="ord_deliverable"><option>Full Written Report</option><option>Tables & Charts Only</option><option>Interpreted Results Summary</option><option>Annotated Output File</option></select></div></div>
+        <div class="fg"><label>Project Description & Research Objectives</label>
+          <textarea id="ord_desc" placeholder="Describe your research objectives, research questions, what tests or models you need, and what you want to learn from the data..."></textarea></div>
+      </div>
+      <div id="ms3" style="display:none">
+        <div class="frow"><div class="fg"><label>Draft Deadline</label><input type="date" id="ord_draftdue"/></div><div class="fg"><label>Final Delivery Deadline</label><input type="date" id="ord_finaldue"/></div></div>
+        <div class="fg"><label>Upload Files (dataset, questionnaire, codebook, instructions)</label>
+          <div class="upl" onclick="document.getElementById('mfile').click()">
+            <p>📎 <strong>Click to upload</strong> or drag & drop here</p>
+            <p style="margin-top:.35rem;font-size:.76rem">SPSS (.sav), Stata (.dta), Excel, CSV, PDF, DOCX, ZIP — max 50MB</p>
+            <input type="file" id="mfile" multiple style="display:none" onchange="document.getElementById('mfn').textContent='Selected: '+[...this.files].map(f=>f.name).join(', ')"/>
+          </div>
+          <p id="mfn" style="font-size:.75rem;color:var(--b2);margin-top:.38rem"></p>
+        </div>
+        <div class="fg"><label>Special Instructions (optional)</label>
+          <textarea id="ord_notes" placeholder="Any extra notes — specific software versions, variable naming, specific tables needed, etc." style="min-height:65px"></textarea></div>
+      </div>
+    </div>
+    <div class="mft">
+      <span id="ordStatus" style="font-size:.78rem;color:var(--sl);margin-right:auto"></span>
+      <button class="bsec" id="mprev" onclick="mPrev()" style="display:none">← Back</button>
+      <button class="bp" id="mnext" onclick="mNext()">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT WIDGET -->
+<button class="chatbub" onclick="openChat()" aria-label="Chat with analyst">💬<span class="cbdg">1</span></button>
+<div class="chatpan" id="chatPan">
+  <div class="cphead"><div class="cav2">👩‍💻</div><div><h4>StatVision Consultancy Analyst</h4><p>Typically replies in minutes · +254 748 216 918</p></div><div class="odot"></div></div>
+  <div class="cmsgs" id="chatMsgs"><div class="msg a">Hi! 👋 Welcome to StatVision Consultancy. I'm here to help with your project. What kind of data analysis do you need?</div></div>
+  <div class="cinp"><input type="text" id="chatIn" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()"/><button class="csend" onclick="sendChat()">➤</button></div>
+</div>
+
+<!-- Firebase (Authentication + Firestore + Storage) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="databridge.js"></script>
+</body>
+</html>
