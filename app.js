@@ -3,6 +3,7 @@ function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'))
   const pg=document.getElementById('page-'+p)
   if(pg){pg.classList.add('active');window.scrollTo(0,0)}
+  sessionStorage.setItem('db_lastPage',p)
   renderSQL()
 }
 function scrollTo2(id){
@@ -30,6 +31,21 @@ let authReadyPromise = new Promise(resolve=>{
     }
     resolve()
   })
+})
+
+// Stay on the page the person was on, instead of bouncing back to Home on every refresh.
+authReadyPromise.then(()=>{
+  const last=sessionStorage.getItem('db_lastPage')
+  if(!last||last==='home'||last==='clientauth'||last==='staffauth')return
+  if(last==='client'){
+    const u=currentClient()
+    if(u){ showPage('client'); applyClientSession(u) }
+    else sessionStorage.removeItem('db_lastPage')
+  } else if(last==='admin'||last==='analyst'){
+    const u=currentStaff()
+    if(u && u.role===last){ showPage(last) }
+    else sessionStorage.removeItem('db_lastPage')
+  }
 })
 
 async function goClient(){
@@ -93,9 +109,9 @@ function clientLogout(){
 // ===== STAFF ACCOUNTS (Admin + Analysts — created via seedStaffOnce(), see chat instructions) =====
 async function seedStaffOnce(){
   const staff=[
-    {email:'henry@statvisionconsultancy.co.ke',pass:'analyst123',name:'Henry G. Michuku',role:'analyst'},
+    {email:'henry@statvisionconsultancy.co.ke',pass:'admin123',name:'Henry Gitau Michuku',role:'admin'},
     {email:'simon@statvisionconsultancy.co.ke',pass:'analyst123',name:'Simon Macharia',role:'analyst'},
-    {email:'joseph@statvisionconsultancy.co.ke',pass:'admin123',name:'Joseph Machuki',role:'admin'}
+    {email:'joseph@statvisionconsultancy.co.ke',pass:'analyst123',name:'Joseph Machuki',role:'analyst'}
   ]
   for(const s of staff){
     try{

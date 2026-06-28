@@ -326,7 +326,12 @@ footer{background:#060F2E;color:#fff;padding:3.5rem 2rem 1.75rem}
 .fu.vis{opacity:1;transform:translateY(0)}
 /* RESPONSIVE */
 @media(max-width:1024px){.fgd{grid-template-columns:1fr 1fr;gap:2rem}.tgd{grid-template-columns:repeat(2,1fr)}.kgd{grid-template-columns:repeat(2,1fr)}.crow{grid-template-columns:1fr}}
-@media(max-width:768px){.nl{display:none}.ntog{display:flex}.hi{grid-template-columns:1fr}.cbox{display:none}.sbi{grid-template-columns:repeat(2,1fr)}.pgd,.tgd2{grid-template-columns:1fr}.prsteps{grid-template-columns:repeat(2,1fr)}.prsteps::before{display:none}.frow{grid-template-columns:1fr}.chatpan{width:calc(100vw - 2.5rem);right:1.25rem}.fgd{grid-template-columns:1fr}.dlayout{grid-template-columns:1fr}.dsb{display:none}.kgd{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.nl{display:none}.ntog{display:flex}.hi{grid-template-columns:1fr}.cbox{display:none}.sbi{grid-template-columns:repeat(2,1fr)}.pgd,.tgd2{grid-template-columns:1fr}.prsteps{grid-template-columns:repeat(2,1fr)}.prsteps::before{display:none}.frow{grid-template-columns:1fr}.chatpan{width:calc(100vw - 2.5rem);right:1.25rem}.fgd{grid-template-columns:1fr}.dlayout{grid-template-columns:1fr;grid-template-rows:auto 1fr}.dsb{display:flex;flex-direction:row;align-items:center;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.5rem .4rem;border-right:none;border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:66px;z-index:9;width:100%}
+.dsb-logo,.slbl2,.ssep{display:none}
+.dsb .snav{flex:0 0 auto;width:auto;white-space:nowrap;padding:.55rem .85rem;font-size:.74rem;border-radius:8px}
+.dsb .snav.active{border-right:none;border-bottom:3px solid var(--am)}
+.dsb .sni{width:auto}
+.kgd{grid-template-columns:1fr 1fr}}
 
 /* ===== CLIENT AUTH GATE ===== */
 .authwrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0A1A3D,#13265C);padding:1.5rem 1rem}
