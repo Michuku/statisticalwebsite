@@ -74,6 +74,8 @@ async function clientSignup(){
     const created=Date.now()
     await fbDB.collection('users').doc(cred.user.uid).set({name,phone,email,role:'client',created})
     currentClientCache={name,phone,email,created,uid:cred.user.uid}
+    // welcome notification
+    await fbDB.collection('notifications').add({uid:cred.user.uid,orderId:null,icon:'🎉',title:'Welcome to StatVision Consultancy!',body:'Your account is ready. Submit your first project any time.',tab:null,read:false,ts:Date.now()})
     showPage('client'); applyClientSession(currentClientCache)
   }catch(e){
     err.textContent = e.code==='auth/email-already-in-use' ? 'An account with this email already exists. Try logging in.'
@@ -185,6 +187,8 @@ function applyClientSession(u){
   if(fp)fp.value=u.phone||''
   renderMyOrders(u.email)
   pbiRenderClientPortal()
+  renderClientDocs()
+  subscribeNotifications(u.uid)
 }
 function renderMyOrders(email){
   const wrap=document.getElementById('myOrdersBody')
@@ -637,7 +641,7 @@ function renderSQL(){
   }).join('')
   const rw=document.getElementById('reportTableWrap')
   if(rw)rw.innerHTML=`<table><thead><tr><th>Order ID</th><th>Client</th><th>Email</th><th>Phone</th><th>Organisation</th><th>Project</th><th>Service</th><th>Tool</th><th>Format</th><th>Analyst</th><th>Deadline</th><th>Total</th><th>Deposit</th><th>Balance</th><th>Status</th></tr></thead><tbody>`+sqlData.map(r=>`<tr><td>${r.id}</td><td>${r.client}</td><td>${r.email}</td><td>${r.phone}</td><td>${r.org}</td><td>${r.project}</td><td>${r.service}</td><td>${r.tool}</td><td>${r.format}</td><td>${r.analyst}</td><td>${r.deadline}</td><td>KES ${r.total}</td><td>KES ${r.deposit}</td><td>KES ${r.balance}</td><td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td></tr>`).join('')+`</tbody></table>`
-  const cu=currentClient();if(cu){renderMyOrders(cu.email);pbiRenderClientPortal()}
+  const cu=currentClient();if(cu){renderMyOrders(cu.email);pbiRenderClientPortal();renderClientDocs()}
   renderAnalystUI()
   renderProjectsTable()
   renderAdminOverview()
@@ -668,8 +672,133 @@ function anShowOrderFiles(){
   const sel=document.getElementById('anUploadOrder'), box=document.getElementById('anClientFiles')
   if(!sel||!box)return
   const files=getFiles(sel.value)
-  box.innerHTML=downloadLinksHTML(files.client)
+  // client files
+  let html = downloadLinksHTML(files.client)
+  // also show previously uploaded analyst files with notes
+  if(files.analyst && files.analyst.length){
+    html += `<div style="margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--br)"><span style="font-size:.73rem;color:var(--sl);font-weight:600">Previously uploaded by analyst:</span>`
+    files.analyst.forEach(f=>{
+      html += `<div style="margin:.3rem 0"><a href="${f.url}" target="_blank" rel="noopener" style="font-size:.78rem;color:var(--b2)">📎 ${f.name}</a>`
+      if(f.delivType) html += ` <span style="font-size:.71rem;color:var(--sl);background:var(--bl);padding:.1rem .4rem;border-radius:4px">${f.delivType}</span>`
+      if(f.notes) html += `<div style="font-size:.72rem;color:var(--sl);margin-left:.6rem;font-style:italic">"${f.notes}"</div>`
+      html += `</div>`
+    })
+    html += `</div>`
+  }
+  box.innerHTML = html
 }
+// ===== NOTIFICATIONS (Firestore-backed, real-time) =====
+async function writeNotification(clientEmail, orderId, icon, title, body, tab){
+  if(!clientEmail||clientEmail==='—') return
+  // find the client's uid from users collection by email
+  try{
+    const snap = await fbDB.collection('users').where('email','==',clientEmail.toLowerCase()).where('role','==','client').limit(1).get()
+    if(snap.empty) return
+    const uid = snap.docs[0].id
+    await fbDB.collection('notifications').add({
+      uid, orderId, icon, title, body, tab,
+      read: false,
+      ts: Date.now()
+    })
+  }catch(e){ console.warn('writeNotification failed:',e.message) }
+}
+
+// Live listener for the current client's notifications
+let _notifUnsub = null
+function subscribeNotifications(uid){
+  if(_notifUnsub) _notifUnsub()
+  _notifUnsub = fbDB.collection('notifications')
+    .where('uid','==',uid)
+    .orderBy('ts','desc')
+    .limit(30)
+    .onSnapshot(snap=>{
+      const notifs = snap.docs.map(d=>({id:d.id,...d.data()}))
+      renderClientNotifs(notifs)
+      // badge count
+      const unread = notifs.filter(n=>!n.read).length
+      const badge = document.getElementById('cNotifBadge')
+      if(badge){ badge.textContent=unread||''; badge.style.display=unread?'inline':'none' }
+    }, err=>console.warn('Notif listener:',err.message))
+}
+function renderClientNotifs(notifs){
+  const wrap = document.getElementById('ctab-notifs-list')
+  if(!wrap) return
+  if(!notifs.length){
+    wrap.innerHTML=`<div style="padding:1.4rem;text-align:center;color:var(--sl);font-size:.85rem">No notifications yet.</div>`
+    return
+  }
+  wrap.innerHTML = notifs.map(n=>{
+    const ago = timeAgo(n.ts)
+    const bg = n.read ? '' : 'background:#FFF8E1;'
+    return `<div style="padding:.9rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.9rem;${bg}" id="nitem-${n.id}">
+      <span style="font-size:1.2rem">${n.icon||'🔔'}</span>
+      <div style="flex:1">
+        <strong style="font-size:.85rem">${n.title}</strong>
+        <div style="font-size:.76rem;color:var(--sl)">${n.body} · ${ago}</div>
+      </div>
+      ${n.tab?`<button class="db1 dba" onclick="markRead('${n.id}');cTab('${n.tab}',null)">View</button>`:''}
+    </div>`
+  }).join('')
+}
+function markRead(notifId){
+  fbDB.collection('notifications').doc(notifId).update({read:true}).catch(()=>{})
+}
+function markAllNotifsRead(){
+  const cu=currentClient(); if(!cu) return
+  fbDB.collection('notifications').where('uid','==',cu.uid).where('read','==',false).get().then(snap=>{
+    const batch=fbDB.batch()
+    snap.docs.forEach(d=>batch.update(d.ref,{read:true}))
+    batch.commit()
+  })
+}
+function timeAgo(ts){
+  if(!ts) return '—'
+  const diff = Date.now()-ts
+  const m = Math.floor(diff/60000)
+  if(m<2) return 'just now'
+  if(m<60) return m+' min ago'
+  const h = Math.floor(m/60)
+  if(h<24) return h+' hr ago'
+  const d = Math.floor(h/24)
+  return d===1?'yesterday':d+' days ago'
+}
+
+// ===== LIVE CLIENT DOCUMENTS TAB =====
+function renderClientDocs(){
+  const cu=currentClient()
+  const wrap=document.getElementById('clientDocsBody')
+  if(!wrap) return
+  if(!cu){ wrap.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--sl);padding:1.4rem">Log in to see your documents.</td></tr>'; return }
+  const mine=sqlData.filter(r=>r.email && r.email.toLowerCase()===cu.email.toLowerCase())
+  const rows=[]
+  mine.forEach(r=>{
+    const files=getFiles(r.id)
+    ;(files.client||[]).forEach(f=>{
+      rows.push({f,orderId:r.id,by:'Client',type:'Uploaded by you',cls:'dbb'})
+    })
+    ;(files.analyst||[]).forEach(f=>{
+      rows.push({f,orderId:r.id,by:'Analyst',type:f.delivType||'Deliverable',cls:'dba'})
+    })
+  })
+  if(!rows.length){
+    wrap.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--sl);padding:1.4rem">No files yet — they will appear here once uploaded.</td></tr>'
+    return
+  }
+  wrap.innerHTML=rows.map(({f,orderId,by,type,cls})=>{
+    const icon = f.name.endsWith('.pdf')?'📄':f.name.endsWith('.docx')||f.name.endsWith('.doc')?'📝':f.name.endsWith('.ipynb')||f.name.endsWith('.sav')?'📊':'📎'
+    const size = f.size ? (f.size>1048576?(f.size/1048576).toFixed(1)+' MB':(f.size/1024).toFixed(0)+' KB') : '—'
+    return `<tr>
+      <td>${icon} ${f.name}</td>
+      <td><strong>${orderId}</strong></td>
+      <td>${type}</td>
+      <td>${by}</td>
+      <td>${f.uploadedAt ? new Date(f.uploadedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
+      <td>${size}</td>
+      <td><a href="${f.url}" target="_blank" rel="noopener"><button class="db1 ${cls}">⬇ Open</button></a></td>
+    </tr>`
+  }).join('')
+}
+
 async function uploadDeliverable(){
   const sel=document.getElementById('anUploadOrder')
   const orderId=sel?sel.value:null
@@ -679,12 +808,28 @@ async function uploadDeliverable(){
   if(!fileInput||!fileInput.files.length){statusEl.style.color='#D13438';statusEl.textContent='⚠ Choose at least one file to upload.';return}
   statusEl.style.color='var(--sl)';statusEl.textContent='Uploading...'
   try{
+    const type=document.getElementById('anDelivType').value
+    const notes=(document.getElementById('anUploadNotes').value||'').trim()
     const newFiles=await uploadFilesToStorage(orderId,'analyst',fileInput.files)
+    // tag each file with meta
+    newFiles.forEach(f=>{ f.delivType=type; f.uploadedAt=Date.now(); f.notes=notes })
     const files=getFiles(orderId)
     const updatedAnalystFiles=files.analyst.concat(newFiles)
-    const type=document.getElementById('anDelivType').value
     const newStatus = type==='Final Deliverable' ? 'Completed' : 'Draft Review'
     await fbDB.collection('orders').doc(orderId).update({'files.analyst':updatedAnalystFiles,status:newStatus})
+    // write a real notification to the client
+    const order=sqlData.find(x=>x.id===orderId)
+    const analyst=currentStaff()
+    const analystName=analyst?analyst.name:'Your analyst'
+    const clientEmail=order?order.email:null
+    const notifTitle = type==='Final Deliverable'
+      ? `Final deliverable ready — ${orderId}`
+      : `${type} uploaded — ${orderId}`
+    const notifBody = notes
+      ? `${analystName}: "${notes.slice(0,80)}${notes.length>80?'…':''}"`
+      : `${analystName} uploaded ${newFiles.length} file${newFiles.length>1?'s':''} for ${order?order.project:'your project'}.`
+    const icon = type==='Final Deliverable' ? '✅' : '📤'
+    await writeNotification(clientEmail, orderId, icon, notifTitle, notifBody, 'docs')
     statusEl.style.color='#107C10'
     statusEl.textContent='✓ Uploaded! Client has been notified and can now download it from their dashboard.'
     fileInput.value='';document.getElementById('anFn').textContent=''

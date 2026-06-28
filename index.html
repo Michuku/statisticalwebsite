@@ -315,7 +315,7 @@
     <button class="snav" onclick="cTab('messages',this)"><span class="sni">💬</span>Messages<span class="ndot"></span></button>
     <button class="snav" onclick="cTab('docs',this)"><span class="sni">📁</span>Documents</button>
     <button class="snav" onclick="cTab('invoices',this)"><span class="sni">🧾</span>Invoices & Receipts</button>
-    <button class="snav" onclick="cTab('notifs',this)"><span class="sni">🔔</span>Notifications<span class="ndot"></span></button>
+    <button class="snav" onclick="cTab('notifs',this)"><span class="sni">🔔</span>Notifications<span id="cNotifBadge" class="ndot" style="display:none"></span></button>
     <button class="snav" onclick="cTab('profile',this)"><span class="sni">👤</span>Profile & Settings</button>
     <div class="ssep"></div>
     <div class="ssep"></div>
@@ -460,13 +460,8 @@
       <!-- DOCUMENTS -->
       <div id="ctab-docs" style="display:none">
         <div class="dtw">
-          <div class="dth"><h3>Document Vault</h3><div class="dtha"><button class="db1 dbb">⬆ Upload File</button></div></div>
-          <div style="overflow-x:auto"><table><thead><tr><th>File Name</th><th>Order</th><th>Type</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Action</th></tr></thead><tbody>
-            <tr><td>📊 dataset_amina.sav</td><td>DB-2025-001</td><td>Dataset</td><td>Client</td><td>12 Jun 2025</td><td>2.3 MB</td><td><button class="db1 dbb">⬇</button></td></tr>
-            <tr><td>📝 dissertation_brief.pdf</td><td>DB-2025-001</td><td>Instructions</td><td>Client</td><td>12 Jun 2025</td><td>540 KB</td><td><button class="db1 dbb">⬇</button></td></tr>
-            <tr><td>📈 draft_analysis_v1.docx</td><td>DB-2025-001</td><td>Draft</td><td>Analyst</td><td>18 Jun 2025</td><td>1.1 MB</td><td><button class="db1 dba">⬇</button></td></tr>
-            <tr><td>📊 cluster_output.ipynb</td><td>DB-2025-003</td><td>Output</td><td>Analyst</td><td>17 Jun 2025</td><td>890 KB</td><td><button class="db1 dbb">⬇</button></td></tr>
-          </tbody></table></div>
+          <div class="dth"><h3>Document Vault</h3><div class="dtha"><span style="font-size:.76rem;color:var(--sl)">All files uploaded by you and your analyst appear here in real time.</span></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>File Name</th><th>Order</th><th>Type</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Action</th></tr></thead><tbody id="clientDocsBody"><tr><td colspan="7" style="text-align:center;color:var(--sl);padding:1.4rem">Loading documents…</td></tr></tbody></table></div>
         </div>
       </div>
       <!-- INVOICES -->
@@ -481,11 +476,9 @@
       <!-- NOTIFICATIONS -->
       <div id="ctab-notifs" style="display:none">
         <div class="dtw">
-          <div class="dth"><h3>Notifications</h3><div class="dtha"><button class="db1 dbb">Mark All Read</button></div></div>
-          <div style="padding:0">
-            <div style="padding:.9rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.9rem;background:#FFF8E1"><span style="font-size:1.2rem">📤</span><div style="flex:1"><strong style="font-size:.85rem">Draft uploaded for DB-2025-001</strong><div style="font-size:.76rem;color:var(--sl)">Henry Gitau Michuku uploaded your draft. Review and send feedback. · 2 hours ago</div></div><button class="db1 dba" onclick="cTab('docs',null)">View</button></div>
-            <div style="padding:.9rem 1.4rem;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.9rem"><span style="font-size:1.2rem">💳</span><div style="flex:1"><strong style="font-size:.85rem">Deposit confirmed — DB-2025-001</strong><div style="font-size:.76rem;color:var(--sl)">KES 12,500 received via M-Pesa. Order confirmed. · 12 Jun 2025</div></div><button class="db1 dbb" onclick="cTab('invoices',null)">Receipt</button></div>
-            <div style="padding:.9rem 1.4rem;display:flex;align-items:center;gap:.9rem"><span style="font-size:1.2rem">🆕</span><div style="flex:1"><strong style="font-size:.85rem">Account created successfully</strong><div style="font-size:.76rem;color:var(--sl)">Welcome to StatVision Consultancy! Your account is ready. · 1 Jun 2025</div></div></div>
+          <div class="dth"><h3>Notifications</h3><div class="dtha"><button class="db1 dbb" onclick="markAllNotifsRead()">Mark All Read</button></div></div>
+          <div id="ctab-notifs-list" style="padding:0">
+            <div style="padding:1.4rem;text-align:center;color:var(--sl);font-size:.85rem">Loading notifications…</div>
           </div>
         </div>
       </div>
