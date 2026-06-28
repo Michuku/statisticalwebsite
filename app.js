@@ -453,20 +453,128 @@ function renderProjectsTable(){
   const tb=document.getElementById('projectsBody')
   if(!tb)return
   const rows=projectFilter==='all'?sqlData:sqlData.filter(r=>r.status===projectFilter)
-  tb.innerHTML=rows.length?rows.map(r=>`<tr><td><strong>${r.id}</strong></td><td>${r.client}</td><td>${r.email}</td><td>${r.phone}</td><td>${r.project}</td><td>${r.service}</td><td>${r.tool}</td><td>—</td><td>${r.deadline}</td><td>KES ${r.total}</td><td>${analystSelect(r.id,r.analyst)}</td><td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td><td><button class="db1 dbb" onclick="alert('Order ${r.id}\\nClient: ${r.client}\\nStatus: ${r.status}')">View</button></td></tr>`).join('')
+  tb.innerHTML=rows.length?rows.map(r=>{
+    const priced=moneyNum(r.total)>0
+    const actionBtn = priced
+      ? `<button class="db1 dba" onclick="openPriceModal('${r.id}')">✏️ Edit Price</button>`
+      : `<button class="db1" style="background:#D13438;color:#fff;border:none" onclick="openPriceModal('${r.id}')">💰 Set Price</button>`
+    return `<tr>
+      <td><strong>${r.id}</strong></td>
+      <td>${r.client}</td><td>${r.email}</td><td>${r.phone}</td>
+      <td>${r.project}</td><td>${r.service}</td><td>${r.tool}</td>
+      <td>—</td><td>${r.deadline}</td>
+      <td>${priced?`<strong style="color:#107C10">KES ${r.total}</strong>`:'<span style="color:#D13438;font-weight:600">Not set</span>'}</td>
+      <td>${analystSelect(r.id,r.analyst)}</td>
+      <td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td>
+      <td style="display:flex;gap:.4rem;flex-wrap:wrap">${actionBtn}</td>
+    </tr>`
+  }).join('')
     : `<tr><td colspan="13" style="text-align:center;color:var(--sl);padding:1.4rem">No orders match this filter yet.</td></tr>`
+}
+
+// ── PRICE MODAL ──────────────────────────────────────────────────────
+function openPriceModal(orderId){
+  const r=sqlData.find(x=>x.id===orderId)
+  if(!r)return
+  // build modal HTML if not already in DOM
+  let m=document.getElementById('priceModal')
+  if(!m){
+    m=document.createElement('div')
+    m.id='priceModal'
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center'
+    m.innerHTML=`
+      <div style="background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem">
+          <h3 style="font-family:var(--fd);font-size:1.05rem;color:var(--ch)">💰 Set Project Price</h3>
+          <button onclick="closePriceModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--sl)">✕</button>
+        </div>
+        <div id="pmOrderInfo" style="background:var(--bl);border-radius:10px;padding:.8rem 1rem;margin-bottom:1.1rem;font-size:.84rem;color:var(--sl)"></div>
+        <input type="hidden" id="pmOrderId"/>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem">
+          <div class="fg"><label>Total Price (KES)</label><input type="number" id="pmTotal" placeholder="e.g. 25000" min="0"/></div>
+          <div class="fg"><label>Deposit Paid (KES)</label><input type="number" id="pmDeposit" placeholder="e.g. 12500" min="0"/></div>
+        </div>
+        <div class="fg" style="margin-bottom:.9rem"><label>Assign Analyst</label>
+          <select id="pmAnalyst">
+            <option>Unassigned</option>
+            <option>Henry Gitau Michuku</option>
+            <option>Simon Macharia</option>
+            <option>Joseph Machuki</option>
+          </select>
+        </div>
+        <div class="fg" style="margin-bottom:1.1rem"><label>Deadline</label><input type="date" id="pmDeadline"/></div>
+        <p id="pmStatus" style="font-size:.78rem;margin-bottom:.6rem;min-height:1rem"></p>
+        <div style="display:flex;gap:.65rem">
+          <button class="db1 dba" style="flex:1;padding:.65rem" onclick="savePriceAndConfirm()">✅ Save & Confirm Order</button>
+          <button class="db1 dbb" onclick="closePriceModal()">Cancel</button>
+        </div>
+      </div>`
+    document.body.appendChild(m)
+  }
+  // populate
+  const r2=sqlData.find(x=>x.id===orderId)
+  document.getElementById('pmOrderId').value=orderId
+  document.getElementById('pmOrderInfo').innerHTML=`<strong>${orderId}</strong> · ${r2.client} · ${r2.project}`
+  document.getElementById('pmTotal').value=moneyNum(r2.total)||''
+  document.getElementById('pmDeposit').value=moneyNum(r2.deposit)||''
+  document.getElementById('pmAnalyst').value=r2.analyst||'Unassigned'
+  document.getElementById('pmDeadline').value=r2.deadline&&r2.deadline!=='TBD'?r2.deadline:''
+  document.getElementById('pmStatus').textContent=''
+  m.style.display='flex'
+}
+function closePriceModal(){
+  const m=document.getElementById('priceModal')
+  if(m)m.style.display='none'
+}
+async function savePriceAndConfirm(){
+  const orderId=document.getElementById('pmOrderId').value
+  const total=parseFloat(document.getElementById('pmTotal').value)||0
+  const deposit=parseFloat(document.getElementById('pmDeposit').value)||0
+  const analyst=document.getElementById('pmAnalyst').value
+  const deadline=document.getElementById('pmDeadline').value
+  const statusEl=document.getElementById('pmStatus')
+  if(total<=0){statusEl.style.color='#D13438';statusEl.textContent='⚠ Please enter a total price greater than 0.';return}
+  statusEl.style.color='var(--sl)';statusEl.textContent='Saving...'
+  const balance=Math.max(0,total-deposit)
+  const newStatus=analyst&&analyst!=='Unassigned'?'Confirmed':'Pending'
+  try{
+    await fbDB.collection('orders').doc(orderId).update({
+      total:String(total), deposit:String(deposit), balance:String(balance),
+      analyst, deadline:deadline||'TBD', status:newStatus
+    })
+    // notify client that price is set and order confirmed
+    const r=sqlData.find(x=>x.id===orderId)
+    if(r&&r.email){
+      await writeNotification(r.email, orderId, '💰',
+        `Price set for your order — ${orderId}`,
+        `Your project has been priced at KES ${total.toLocaleString()}. Deposit: KES ${deposit.toLocaleString()}. Balance: KES ${balance.toLocaleString()}. Analyst: ${analyst}.`,
+        'invoices'
+      )
+    }
+    statusEl.style.color='#107C10'
+    statusEl.textContent='✓ Saved! Client has been notified.'
+    setTimeout(()=>closePriceModal(), 1200)
+  }catch(e){
+    statusEl.style.color='#D13438'
+    statusEl.textContent='⚠ Error: '+e.message
+  }
 }
 function exportProjects(){ exportCSV() }
 
 function generateInvoicePDF(orderId){
   const r=sqlData.find(x=>x.id===orderId)
   if(!r){ alert('Order not found.'); return }
+  if(!window.jspdf){ alert('PDF library not loaded — please refresh the page and try again.'); return }
+  if(parseFloat(String(r.total||0).replace(/,/g,''))<=0){
+    alert('Cannot generate invoice — no price has been set for this order yet.\n\nAdmin must set the price first from the All Orders tab.'); return
+  }
   const { jsPDF } = window.jspdf
   const doc = new jsPDF({unit:'mm',format:'a4'})
   const pw=210, ph=297, mg=15
   const navy=[10,26,61], gold=[245,166,35], white=[255,255,255]
   const ink=[20,20,30], muted=[100,110,120], light=[243,244,246]
   const green=[16,124,16], red=[209,52,68]
+  const moneyNum=v=>parseFloat(String(v||0).replace(/,/g,''))||0
   const moneyFmt=v=>'KES '+Math.round(moneyNum(v)).toLocaleString()
   const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'})
   const isPaid=moneyNum(r.balance)<=0
