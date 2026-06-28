@@ -191,14 +191,24 @@ function renderMyOrders(email){
   if(!wrap)return
   const mine=sqlData.filter(r=>r.email && r.email.toLowerCase()===String(email).toLowerCase())
   if(mine.length===0){
-    wrap.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--sl);padding:1.4rem">No orders yet — click "+ New Order" to submit your first project.</td></tr>`
+    wrap.innerHTML=`<tr><td colspan="9" style="text-align:center;color:var(--sl);padding:1.4rem">No orders yet — click "+ New Order" to submit your first project.</td></tr>`
+  } else {
+    wrap.innerHTML=mine.map(r=>{
+      const files=getFiles(r.id)
+      const deliverable=files.analyst.length?downloadLinksHTML(files.analyst):'<span style="color:var(--sl);font-size:.74rem">Not ready yet</span>'
+      return `<tr><td><strong>${r.id}</strong></td><td>${r.project}</td><td>${r.tool}</td><td>${r.analyst}</td><td>${r.deadline}</td><td>KES ${r.total}</td><td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td><td>${deliverable}</td><td><button class="db1 dbb" onclick="generateInvoicePDF('${r.id}')">⬇ PDF</button></td></tr>`
+    }).join('')
+  }
+  renderMyInvoices(mine)
+}
+function renderMyInvoices(mine){
+  const wrap=document.getElementById('myInvoicesBody')
+  if(!wrap)return
+  if(!mine.length){
+    wrap.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--sl);padding:1.4rem">No invoices yet — they'll appear here once you place an order.</td></tr>`
     return
   }
-  wrap.innerHTML=mine.map(r=>{
-    const files=getFiles(r.id)
-    const deliverable=files.analyst.length?downloadLinksHTML(files.analyst):'<span style="color:var(--sl);font-size:.74rem">Not ready yet</span>'
-    return `<tr><td><strong>${r.id}</strong></td><td>${r.project}</td><td>${r.tool}</td><td>${r.analyst}</td><td>${r.deadline}</td><td>KES ${r.total}</td><td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td><td>${deliverable}</td></tr>`
-  }).join('')
+  wrap.innerHTML=mine.map(r=>`<tr><td><strong>${r.id}</strong></td><td>${r.project}</td><td>${r.analyst}</td><td>KES ${r.total}</td><td>KES ${r.deposit}</td><td>KES ${r.balance}</td><td><span class="badge ${scls[r.status]||'b-pn'}">${r.status}</span></td><td><button class="db1 dbb" onclick="generateInvoicePDF('${r.id}')">⬇ PDF</button></td></tr>`).join('')
 }
 
 // ===== FILE STORAGE (browser-local — see chat note on real shared storage) =====
@@ -428,6 +438,129 @@ function renderProjectsTable(){
     : `<tr><td colspan="13" style="text-align:center;color:var(--sl);padding:1.4rem">No orders match this filter yet.</td></tr>`
 }
 function exportProjects(){ exportCSV() }
+
+function generateInvoicePDF(orderId){
+  const r=sqlData.find(x=>x.id===orderId)
+  if(!r){ alert('Order not found.'); return }
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF({unit:'mm',format:'a4'})
+  const pw=210
+  const moneyFmt=v=>'KES '+Math.round(moneyNum(v)).toLocaleString()
+
+  // Header band
+  doc.setFillColor(10,26,61) // dark navy
+  doc.rect(0,0,pw,32,'F')
+  doc.setTextColor(255,255,255)
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(18)
+  doc.text('StatVision Consultancy',15,15)
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(9)
+  doc.text('Professional Data Analysis & Research Services · Nairobi, Kenya',15,21)
+  doc.text('hello@statvisionconsultancy.co.ke  ·  +254 748 216 918',15,26)
+
+  doc.setTextColor(20,20,30)
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(16)
+  doc.text('INVOICE / RECEIPT',pw-15,15,{align:'right'})
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(9)
+  doc.text('Order #: '+r.id,pw-15,21,{align:'right'})
+  doc.text('Date: '+new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),pw-15,26,{align:'right'})
+
+  // Bill to
+  let y=44
+  doc.setFontSize(10)
+  doc.setFont('helvetica','bold')
+  doc.text('BILLED TO',15,y)
+  doc.setFont('helvetica','normal')
+  doc.text(r.client||'—',15,y+6)
+  doc.text(r.email||'—',15,y+11)
+  doc.text(r.phone||'—',15,y+16)
+
+  doc.setFont('helvetica','bold')
+  doc.text('ANALYST ASSIGNED',pw-15,y,{align:'right'})
+  doc.setFont('helvetica','normal')
+  doc.text(r.analyst||'Unassigned',pw-15,y+6,{align:'right'})
+
+  // Service table
+  y+=28
+  doc.setFillColor(243,242,241)
+  doc.rect(15,y,pw-30,9,'F')
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(9)
+  doc.text('SERVICE / PROJECT',18,y+6)
+  doc.text('TOOL',120,y+6)
+  doc.text('FORMAT',145,y+6)
+  doc.text('AMOUNT',pw-18,y+6,{align:'right'})
+  y+=9
+  doc.setDrawColor(225,223,221)
+  doc.line(15,y,pw-15,y)
+  y+=8
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(9)
+  const projectLines=doc.splitTextToSize(r.project||'—',95)
+  doc.text(projectLines,18,y)
+  doc.text(r.tool||'—',120,y)
+  doc.text(r.format||'—',145,y)
+  doc.text(moneyFmt(r.total),pw-18,y,{align:'right'})
+  y+=Math.max(8,projectLines.length*5)+6
+  doc.line(15,y,pw-15,y)
+
+  // Financial summary
+  y+=12
+  const sx=pw-85
+  doc.setFontSize(10)
+  doc.setFont('helvetica','normal')
+  doc.text('Total Service Price',sx,y); doc.text(moneyFmt(r.total),pw-15,y,{align:'right'})
+  y+=7
+  doc.text('Amount Paid',sx,y); doc.setTextColor(16,124,16); doc.text(moneyFmt(r.deposit),pw-15,y,{align:'right'}); doc.setTextColor(20,20,30)
+  y+=7
+  doc.setDrawColor(20,20,30)
+  doc.line(sx,y+2,pw-15,y+2)
+  y+=9
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(11)
+  doc.text('Balance Due',sx,y)
+  doc.setTextColor(moneyNum(r.balance)>0?209:16, moneyNum(r.balance)>0?52:124, moneyNum(r.balance)>0?68:16)
+  doc.text(moneyFmt(r.balance),pw-15,y,{align:'right'})
+  doc.setTextColor(20,20,30)
+
+  // Status
+  y+=14
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(9)
+  doc.text('Order Status: '+(r.status||'Pending'),15,y)
+
+  // Official stamp (bottom right) — rotated circular seal
+  const sxC=pw-48, syC=y+38, rad=22
+  doc.saveGraphicsState && doc.saveGraphicsState()
+  doc.setDrawColor(178,34,34)
+  doc.setTextColor(178,34,34)
+  doc.setLineWidth(0.8)
+  doc.circle(sxC,syC,rad,'S')
+  doc.circle(sxC,syC,rad-3,'S')
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(7.2)
+  doc.text('STATVISION CONSULTANCY',sxC,syC-9,{align:'center',angle:0})
+  doc.setFontSize(6.4)
+  doc.text('OFFICIALLY APPROVED',sxC,syC-3,{align:'center'})
+  doc.setFont('helvetica','bold')
+  doc.setFontSize(7.8)
+  doc.text('Henry Gitau Michuku',sxC,syC+3,{align:'center'})
+  doc.setFont('helvetica','normal')
+  doc.setFontSize(6.4)
+  doc.text('Chief Executive Officer',sxC,syC+8,{align:'center'})
+  doc.text(new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),sxC,syC+13,{align:'center'})
+
+  // Footer note
+  doc.setTextColor(120,120,120)
+  doc.setFont('helvetica','italic')
+  doc.setFontSize(8)
+  doc.text('This is a system-generated invoice from StatVision Consultancy. For queries, contact hello@statvisionconsultancy.co.ke',15,285)
+
+  doc.save(`Invoice-${r.id}.pdf`)
+}
 
 function renderAdminOverview(){
   const active=document.getElementById('adKpiActive')

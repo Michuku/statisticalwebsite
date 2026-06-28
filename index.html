@@ -6,8 +6,8 @@
 <title>StatVision Consultancy — Data Analysis & Research Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="style.css">
-  <script src="firebase-config.js" defer></script>
-  <script src="app.js" defer></script>
+<script src="firebase-config.js" defer></script>
+<script src="app.js" defer></script>
 </head>
 <body>
 <!-- NAV -->
@@ -391,8 +391,8 @@
         <div class="dtw" style="margin-bottom:1.2rem">
           <div class="dth"><h3>My Submitted Orders</h3></div>
           <div style="overflow-x:auto"><table>
-            <thead><tr><th>Order ID</th><th>Project</th><th>Tool</th><th>Analyst</th><th>Deadline</th><th>Total</th><th>Status</th><th>Completed Work</th></tr></thead>
-            <tbody id="myOrdersBody"><tr><td colspan="8" style="text-align:center;color:var(--sl);padding:1.4rem">Log in to see your submitted orders here.</td></tr></tbody>
+            <thead><tr><th>Order ID</th><th>Project</th><th>Tool</th><th>Analyst</th><th>Deadline</th><th>Total</th><th>Status</th><th>Completed Work</th><th>Invoice</th></tr></thead>
+            <tbody id="myOrdersBody"><tr><td colspan="9" style="text-align:center;color:var(--sl);padding:1.4rem">Log in to see your submitted orders here.</td></tr></tbody>
           </table></div>
         </div>
         <div class="filt">
@@ -473,11 +473,9 @@
       <div id="ctab-invoices" style="display:none">
         <div class="dtw">
           <div class="dth"><h3>Invoices & Receipts</h3></div>
-          <div style="overflow-x:auto"><table><thead><tr><th>Document #</th><th>Order</th><th>Date</th><th>Amount</th><th>Type</th><th>Status</th><th>Action</th></tr></thead><tbody>
-            <tr><td>INV-001</td><td>DB-2025-001</td><td>12 Jun 2025</td><td>KES 25,000</td><td>Invoice</td><td><span class="badge b-pn">Sent</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
-            <tr><td>REC-001</td><td>DB-2025-001</td><td>12 Jun 2025</td><td>KES 12,500</td><td>Deposit Receipt</td><td><span class="badge b-dn">Paid</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
-            <tr><td>INV-002</td><td>DB-2025-003</td><td>15 Jun 2025</td><td>KES 36,000</td><td>Invoice</td><td><span class="badge b-pr">Partial</span></td><td><button class="db1 dbb">⬇ PDF</button></td></tr>
-          </tbody></table></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Order ID</th><th>Service</th><th>Analyst</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="myInvoicesBody"><tr><td colspan="8" style="text-align:center;color:var(--sl);padding:1.4rem">Log in to see your invoices here.</td></tr></tbody>
+          </table></div>
         </div>
       </div>
       <!-- NOTIFICATIONS -->
@@ -967,6 +965,7 @@
   <div class="cinp"><input type="text" id="chatIn" placeholder="Type your question..." onkeydown="if(event.key==='Enter')sendChat()"/><button class="csend" onclick="sendChat()">➤</button></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <!-- Firebase (Authentication + Firestore + Storage) -->
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
